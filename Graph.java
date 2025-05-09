@@ -1,4 +1,4 @@
-public abstract Graph{
+public interface Graph{
 	/* Inserts a new cooridnate pair */
 	public void insert(int x, int y);
 
