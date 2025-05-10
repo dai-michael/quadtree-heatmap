@@ -9,7 +9,7 @@ public class Quadtree implements Graph{
 	private final int TOT_X;
 	private final int TOT_Y;
 	public int defaultDepth;
-	private Region root;
+	public Region root;
 
 	public Quadtree(int x, int y, int depth) {
 		this.TOT_X = x;
@@ -27,16 +27,15 @@ public class Quadtree implements Graph{
 	}
 
 	public void insertHelper(Point insertPoint, Region currRegion) {
-
 		// Base case: has space to insert
-		if (!currRegion.isEmpty()) {
+		if (currRegion.isEmpty()) {
 			currRegion.setPoint(insertPoint);
 		}
-		// Case 1: no space in region and no divisions
+		// Recursive case 1: no space in region and no divisions
 		else if (!currRegion.isDivided()) {
 			resolveCollision(currRegion, insertPoint, currRegion.getPoint());
 		}
-		// Case 2: region is divided
+		// Recursive case 2: region is divided
 		else {
 			insertHelper(insertPoint, currRegion.findSubregion(insertPoint));
 		}
@@ -47,12 +46,11 @@ public class Quadtree implements Graph{
 		Region subregion1 = currRegion.findSubregion(point1);
 		Region subregion2 = currRegion.findSubregion(point2);
 
-
-		// Case 1: Both regions which the point lies in is the same
+		// Recursive step: Both regions which the point lies in is the same
 		if (subregion1 == subregion2) {
 			resolveCollision(subregion1, point1, point2);
 		}
-		// If regions are different, set points to those regions
+		// Base case: If regions are different, set points to those regions
 		else {
 			subregion1.setPoint(point1);
 			subregion2.setPoint(point2);
@@ -62,14 +60,25 @@ public class Quadtree implements Graph{
 	/**
 	 *  Gets number of points in a certain branch 
 	 */
-	public int getPointNumber(int x, int y) {
-		// Use assert statement here
-		return 0;
+	public int countPoints(Region currRegion) {
+		// Base case 1: region is empty
+		if (currRegion.isEmpty()) {
+			return 0;
+		}
+		// Base case 2: region contains a point
+		if (currRegion.storesPoint()) {
+			return 1;
+		}
+		// Recursive step: for every subregion count points
+		int numPoints = 0;
+		for (Region region : currRegion.subregionList) {
+			numPoints += countPoints(region);
+		}
+		return numPoints;
 	}
 
 	/**
 	 * Initialize quadtree with regions going down to specified depth
-	 * 
 	 */
 	public void init(Region region, int currDepth) {
 		if (currDepth < defaultDepth) {
@@ -85,5 +94,10 @@ public class Quadtree implements Graph{
 
 	public static void main(String[] args) {
 		Quadtree testQuad = new Quadtree(100, 100, 2);
+		testQuad.insert(new Point(10,10));
+		testQuad.insert(new Point(20,20));
+		System.out.println(testQuad.root.SW.SW.storesPoint());
+		System.out.println(testQuad.root.SW.SW.SW.storesPoint());
+		System.out.println(testQuad.countPoints(testQuad.root));
 	}
 }
