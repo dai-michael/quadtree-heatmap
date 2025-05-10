@@ -1,11 +1,20 @@
+package DaiToku;
+import java.awt.Point;
+
 public interface Graph{
-	/* Inserts a new cooridnate pair */
-	public abstract void insert(int x, int y);
+	/**
+	 *  Inserts a new cooridnate pair 
+	 */
+	public abstract void insert(Point insertPoint);
 
-	/* Gets number of points in a certain branch */
-	public abstract int getPointNumber(int x, int y);
+	/** 
+	 *  Gets number of points in a certain branch 
+	 */
+	public abstract int countPoints(Region currRegion);
 
-	// /* Divide until each region only contains one point */
-	// public abstract void subDivide(Region region);
+	/** 
+	 *  Gets number of points in a certain branch 
+	 */
+	public abstract void init(Region region, int currDepth);
 
 }
