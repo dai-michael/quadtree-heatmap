@@ -1,11 +1,14 @@
+package DaiToku;
+
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.lang.Exception;
 
 public class Quadtree implements Graph{
 	private final int TOT_X;
 	private final int TOT_Y;
-	private int defaultDepth;
+	public int defaultDepth;
 	private Region root;
 
 	public Quadtree(int x, int y, int depth) {
@@ -13,25 +16,53 @@ public class Quadtree implements Graph{
 		this.TOT_Y = y;
 		this.defaultDepth = depth;
 		Region root = new Region(0, 0, TOT_X, TOT_Y);
-		System.out.println(Arrays.toString(root.getCoordinates()));
 		init(root, 0);
 		System.out.println(root.NE);
-		// System.out.println(Arrays.toString(root.NE.getCoordinates()));
 	}
 
 	/* Inserts a new cooridnate pair */
-	public void insert(int x, int y) {
-		insertHelper(x, y, root);
-		return;
+	public void insert(Point insertPoint) {
+		insertHelper(insertPoint, root);
 	}
 
-	public void insertHelper(int x, int y, Region currRegion) {
+	public void insertHelper(Point insertPoint, Region currRegion) {
+
+		// Base case: has space to insert
 		if (!currRegion.isEmpty()) {
-			System.out.println("Hello");
+			currRegion.setPoint(insertPoint);
 		}
+		// Case 1: no space in region and no divisions
+		// else if (!currRegion.isDivided()) {
+		// 	resolveCollision(currRegion, insertPoint, currRegion.getPoint());
+		// }
+		// Case 2: region is divided
 		else {
-			currRegion.coord = new Point(x, y);
+			insertHelper(insertPoint, findPointRegion(currRegion, insertPoint));
 		}
+	}
+
+	// public void resolveCollision(Region currRegion, Point point1, Point point2) {
+	// 	// Divide region into four quadrants
+	// 	subDivide(currRegion);
+	// 	if (findPointRegion(currRegion.NW, point1) == findPointRegion(currRegion.))
+	// }
+
+	/**
+	 * Find region subdivision that the point lies in
+	 */
+	public Region findPointRegion(Region currRegion, Point currPoint) {
+		if (!currRegion.isDivided()) {
+			// Throw an exception because there are no regions to search through 
+		}
+
+		for (Region region : currRegion.getSubRegionList()) {
+			if (region.containsLocation(currPoint)) {
+				return region;
+			}
+		}
+
+		// Throw an exception because point out of acceptable area
+		return null;
 	}
 
 	/* Gets number of points in a certain branch */
@@ -52,11 +83,12 @@ public class Quadtree implements Graph{
 			int y2 = region.Y2;
 			int midX = (x1 + x2) / 2;
 			int midY = (y1+ y2) / 2;
-			// Calculate new coordinates for all regions and create new region
-			region.NE = new Region(midX, midY, x2, y2);
-			region.SE = new Region(midX, y1, x2, midY);
-			region.SW = new Region(x1, y1, midX, midY);
-			region.NW = new Region(x1, midY, midX, y2);
+
+			// Add new quadrants to the current region
+			region.setQuadrants(new Region(midX, midY, x2, y2), 
+								new Region(midX, y1, x2, midY), 
+								new Region(x1, y1, midX, midY), 
+								new Region(x1, midY, midX, y2));
 			return true;
 		}
 		return false;
@@ -80,17 +112,22 @@ public class Quadtree implements Graph{
 		public final int Y1;
 		public final int X2;
 		public final int Y2;
+		private Region[] subRegionList;
 		public Region NE;
 		public Region SE;
 		public Region SW;
 		public Region NW;
-		private Point coord; 
+		private Point coord;
+		// Whether or not region has subregions
+		// NOT whether or not there is a point assigned
+		private boolean isDivided; 
 
 		public Region(int x1, int y1, int x2, int y2) {
 			this.X1 = x1;
 			this.Y1 = y1;
 			this.X2 = x2;
 			this.Y2 = y2;
+			this.isDivided = true;
 		}
 
 		public Region(int x1, int y1, int x2, int y2, Point point) {
@@ -99,50 +136,78 @@ public class Quadtree implements Graph{
 			this.X2 = x2;
 			this.Y2 = y2;
 			this.coord = coord;
+			this.isDivided = true;
 		}
 
-		public Region(int x1, int y1, int x2, int y2, Region NE, Region SE, Region SW, Region NW) {
-			this.X1 = x1;
-			this.Y1 = y1;
-			this.X2 = x2;
-			this.Y2 = y2;
+		/* 
+		 * Used for debugging, gets coordinates of region area
+		 */
+		public Region[] getSubRegionList() {
+			Region[] subRegionList = {NE, SE, SW, NW};
+			return subRegionList;
+		}
+
+		/** 
+		 *  Set cooridnate of point in terminal node
+		 * 	Return true if successfuly completed
+		 * 	Return false is unsuccessful
+		 * **/
+		public void setPoint(Point coord) {
+			if (isDivided == false) {
+				this.coord = coord;
+			}
+			else {
+				// throw an exception
+			}
+		}
+
+		public Point getPoint() {
+			return coord;
+		}
+
+		/**
+		 * Sets quadrants
+		 */
+		public void setQuadrants(Region NE, Region SE, Region SW, Region NW) {
 			this.NE = NE;
 			this.SE = SE;
 			this.SW = SW;
 			this.NW = NW;
+			this.coord = null;
+			this.isDivided = false;
 		}
 
-		public Integer[] getCoordinates() {
-			Integer[] coordinates = {X1, Y1, X2, Y2};
-			return coordinates;
+		/** 
+		 * Return if the region has subdivisions
+		 */
+		public boolean isDivided() {
+			return isDivided;
 		}
 
-		/** Set cooridnate of point in terminal node
-		 * 	Return true if successfuly completed
-		 * 	Return false is unsuccessful
-		 * **/
-		public boolean setPoint(Point coord) {
-			if (NE == null) {
-				this.coord = coord;
+		/* 
+		 * Return if a point location lies in that region
+		 */
+		public boolean containsLocation(Point currPoint) {
+			int x = (int) currPoint.getX();
+			int y = (int) currPoint.getY();
+			if (x >= X1 && x <= X2 && y >= Y1 && y <= Y2) {
 				return true;
 			}
-			else {
-				return false;
-			}
+			return false;
 		}
 
-		// Return if region has a point thus making it terminal
-		public boolean isTerminal() {
+		/* 
+		 * Return if the region stores a point
+		 */
+		public boolean storesPoint() {
 			return coord != null;
 		}
 
-		// Return if there region has subdivisions
-		public boolean isDivided() {
-			return NE != null;
-		}
-
+		/* 
+		 * Return if the region stores no points and has no subregions
+		 */
 		public boolean isEmpty() {
-			return !isDivided() && !isTerminal();
+			return !isDivided() && !storesPoint();
 		}
 
 	}
