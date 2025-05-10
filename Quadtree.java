@@ -33,37 +33,30 @@ public class Quadtree implements Graph{
 			currRegion.setPoint(insertPoint);
 		}
 		// Case 1: no space in region and no divisions
-		// else if (!currRegion.isDivided()) {
-		// 	resolveCollision(currRegion, insertPoint, currRegion.getPoint());
-		// }
+		else if (!currRegion.isDivided()) {
+			resolveCollision(currRegion, insertPoint, currRegion.getPoint());
+		}
 		// Case 2: region is divided
 		else {
-			insertHelper(insertPoint, findPointRegion(currRegion, insertPoint));
+			insertHelper(insertPoint, currRegion.findSubregion(insertPoint));
 		}
 	}
 
-	// public void resolveCollision(Region currRegion, Point point1, Point point2) {
-	// 	// Divide region into four quadrants
-	// 	currRegion.subDivide();
-	// 	if (findPointRegion(currRegion.NW, point1) == findPointRegion(currRegion.))
-	// }
+	public void resolveCollision(Region currRegion, Point point1, Point point2) {
+		currRegion.subDivide();
+		Region subregion1 = currRegion.findSubregion(point1);
+		Region subregion2 = currRegion.findSubregion(point2);
 
-	/**
-	 * Find region subdivision that the point lies in
-	 */
-	public Region findPointRegion(Region currRegion, Point currPoint) {
-		if (!currRegion.isDivided()) {
-			// Throw an exception because there are no regions to search through 
+
+		// Case 1: Both regions which the point lies in is the same
+		if (subregion1 == subregion2) {
+			resolveCollision(subregion1, point1, point2);
 		}
-
-		for (Region region : currRegion.subregionList) {
-			if (region.containsLocation(currPoint)) {
-				return region;
-			}
+		// If regions are different, set points to those regions
+		else {
+			subregion1.setPoint(point1);
+			subregion2.setPoint(point2);
 		}
-
-		// Throw an exception because point out of acceptable area
-		return null;
 	}
 
 	/**
