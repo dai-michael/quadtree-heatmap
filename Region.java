@@ -111,13 +111,36 @@ class Region{
 			int midY = (Y1+ Y2) / 2;
 
 			// Add new quadrants to the current region
-			setQuadrants(new Region(midX, midY, X2, Y2), 
-						 new Region(midX, Y1, X2, midY), 
-						 new Region(X1, Y1, midX, midY), 
-						 new Region(X1, midY, midX, Y2));
+			setQuadrants(new Region(midX, midY, X2, Y2),  // Northeast
+						 new Region(midX, Y1, X2, midY),  // Southeast
+						 new Region(X1, Y1, midX, midY),  // Southwest
+						 new Region(X1, midY, midX, Y2)); // Northwest
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Find region subdivision that the point lies in
+	 */
+	public Region findSubregion(Point currPoint) {
+		if (!isDivided()) {
+			// Throw an exception because there are no regions to search through 
+		}
+
+		for (Region region : subregionList) {
+			if (region.containsLocation(currPoint)) {
+				return region;
+			}
+		}
+
+		// Throw an exception because point out of acceptable area
+		return null;
+	}
+
+	public String toString() {
+		String output = "Region coordinates: (%d, %d), (%d, %d)";
+		return String.format(output, X1, Y1, X2, Y2);
 	}
 
 	public static void main(String[] args) {
