@@ -9,7 +9,7 @@ public class Quadtree implements Graph{
 	private final int TOT_X;
 	private final int TOT_Y;
 	public int defaultDepth;
-	public Region root;
+	private Region root;
 
 	public Quadtree(int x, int y, int depth) {
 		this.TOT_X = x;
@@ -32,7 +32,7 @@ public class Quadtree implements Graph{
 			currRegion.setPoint(insertPoint);
 		}
 		// Recursive case 1: no space in region and no divisions
-		else if (!currRegion.isDivided()) {
+		else if (!currRegion.isLeaf()) {
 			resolveCollision(currRegion, insertPoint, currRegion.getPoint());
 		}
 		// Recursive case 2: region is divided
@@ -56,6 +56,14 @@ public class Quadtree implements Graph{
 			subregion2.setPoint(point2);
 		}
 	}
+
+	/** 
+	 * Get root node
+	 */
+	public Region getRoot() {
+		return root;
+	}
+
 
 	/**
 	 *  Gets number of points in a certain branch 
@@ -99,5 +107,6 @@ public class Quadtree implements Graph{
 		System.out.println(testQuad.root.SW.SW.storesPoint());
 		System.out.println(testQuad.root.SW.SW.SW.storesPoint());
 		System.out.println(testQuad.countPoints(testQuad.root));
+		System.out.println(testQuad.getRoot());
 	}
 }
