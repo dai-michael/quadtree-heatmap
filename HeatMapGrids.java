@@ -100,19 +100,20 @@ public class HeatMapGrids extends JComponent {
     }
     
     /**
-     * Recursively calculate colors for regions based on size
+     * Recursively calculate colors for regions based on num of points
      */
     private void calculateRegionColors(Region region) {
         // Calculate region size
         int width = region.X2 - region.X1;
         int height = region.Y2 - region.Y1;
         int area = width * height;
-        
+        int numPoints = quadtree.countPoints(region);
+
         // Calculate color intensity based on size
         // Smaller regions get darker colors
         // Max area is the full quadtree area
         int maxArea = quadtree.TOT_X * quadtree.TOT_Y;
-        float ratio = (float) area / maxArea;
+        float ratio =  numPoints;//(float) area / maxArea;
         
         // Create a color that ranges from dark blue to light blue based on size
         int colorValue = Math.min(255, (int)(ratio * 255));
