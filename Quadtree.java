@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.lang.Exception;
 
 public class Quadtree implements Graph{
-	private final int TOT_X;
-	private final int TOT_Y;
+	public final int TOT_X;
+	public final int TOT_Y;
 	public int defaultDepth;
 	private Region root;
 

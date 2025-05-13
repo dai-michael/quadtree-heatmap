@@ -33,15 +33,22 @@ public class HeatMap extends JFrame{
         setLocationRelativeTo(null);
         setVisible(true);
     }
-	public void drawBoundaries(){
 
-	}
 	public void resetMap(){
 
 	}
-	public void colorRegions(){
 
-	}
+    /**
+     * Colors the grid regions based on their size
+     * Smaller regions will have darker colors, larger regions lighter colors
+     */
+    public void colorGrids() {
+        if (grid != null) {
+            grid.colorRegionsBySize();
+            grid.repaint(); // calls paintComponent in HeatMapGrids (Jcomponent)
+        }
+    }
+    
 	public void zoomInOut(){
 
 	}
