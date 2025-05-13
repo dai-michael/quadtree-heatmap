@@ -32,7 +32,7 @@ public class Quadtree implements Graph{
 			currRegion.setPoint(insertPoint);
 		}
 		// Recursive case 1: no space in region and no divisions
-		else if (!currRegion.isLeaf()) {
+		else if (!currRegion.isDivided()) {
 			resolveCollision(currRegion, insertPoint, currRegion.getPoint());
 		}
 		// Recursive case 2: region is divided
