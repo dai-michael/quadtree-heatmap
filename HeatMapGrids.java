@@ -19,7 +19,7 @@ public class HeatMapGrids extends JComponent {
         // … set up mouse listeners for pan/zoom, etc.
     }
 
-    //@Override? maybe
+    @Override // maybe, this is good coding practice.
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -50,7 +50,7 @@ public class HeatMapGrids extends JComponent {
         g2.draw(new Rectangle2D.Double(x, y, width, height));
 
         // 3) recurse if subdivided
-        if (!region.isLeaf()) {
+        if (region.isDivided()) {
             for (Region child : region.subregionList) {
                 drawBoundaries(g2, child);
             }
@@ -77,7 +77,7 @@ public class HeatMapGrids extends JComponent {
         g2.draw(new Rectangle2D.Double(x, y, width, height));
 
         // Recurse if subdivided
-        if (!region.isLeaf()) {
+        if (region.isDivided()) {
             for (Region child : region.subregionList) {
                 drawColoredRegions(g2, child);
             }
@@ -122,7 +122,7 @@ public class HeatMapGrids extends JComponent {
         regionColors.put(region, regionColor);
         
         // Recurse if region is divided
-        if (!region.isLeaf()) {
+        if (region.isDivided()) {
             for (Region child : region.subregionList) {
                 calculateRegionColors(child);
             }
