@@ -14,14 +14,14 @@ class Region{
 	public Point coord;
 	// Whether or not region has subregions
 	// NOT whether or not there is a point assigned
-	private boolean isLeaf; 
+	private boolean isDivided; 
 
 	public Region(int x1, int y1, int x2, int y2) {
 		this.X1 = x1;
 		this.Y1 = y1;
 		this.X2 = x2;
 		this.Y2 = y2;
-		this.isLeaf = false;
+		this.isDivided = false;
 	}
 
 	public Region(int x1, int y1, int x2, int y2, Point coord) {
@@ -30,7 +30,7 @@ class Region{
 		this.X2 = x2;
 		this.Y2 = y2;
 		this.coord = coord;
-		this.isLeaf = false;
+		this.isDivided = false;
 	}
 
 	/** 
@@ -39,7 +39,7 @@ class Region{
 	 * 	Return false is unsuccessful
 	 */
 	public void setPoint(Point coord) {
-		if (isLeaf == false) {
+		if (isDivided == false) {
 			this.coord = coord;
 		}
 		else {
@@ -64,14 +64,14 @@ class Region{
 		this.NW = NW;
 		subregionList = new Region[]{NE, SE, SW, NW};
 		this.coord = null;
-		this.isLeaf = true;
+		this.isDivided = true;
 	}
 
 	/** 
 	 * Return if the region is a leaf node
 	 */
-	public boolean isLeaf() {
-		return isLeaf;
+	public boolean isDivided() {
+		return isDivided;
 	}
 
 	/* 
@@ -97,7 +97,7 @@ class Region{
 	 * Return if the region is a leaf and has no points
 	 */
 	public boolean isEmpty() {
-		return !isLeaf() && !storesPoint();
+		return !isDivided() && !storesPoint();
 	}
 
 	/** 
@@ -106,7 +106,7 @@ class Region{
 	 *  Returns false if region is already partitioned
 	 */
 	public boolean subDivide() {
-		if (!isLeaf()) {
+		if (!isDivided()) {
 			int midX = (X1 + X2) / 2;
 			int midY = (Y1+ Y2) / 2;
 
@@ -124,7 +124,7 @@ class Region{
 	 * Find region subdivision that the point lies in
 	 */
 	public Region findSubregion(Point currPoint) {
-		if (!isLeaf()) {
+		if (!isDivided()) {
 			// Throw an exception because there are no regions to search through 
 		}
 
@@ -145,7 +145,7 @@ class Region{
 
 	public static void main(String[] args) {
 		Region test = new Region(0, 0, 100, 100, new Point(10,10));
-		System.out.println("isLeaf test: " + test.isLeaf() + " | Expected output: false");
+		System.out.println("isDivided test: " + test.isDivided() + " | Expected output: false");
 		System.out.println("isEmpty test: " + test.isEmpty() + " | Exepcted output: false");
 		System.out.println("storesPoint test: " + test.storesPoint() + " | Expected output: true");
 		System.out.println("getPoint test: " + test.getPoint() + " | Expected output: 10,10");
@@ -153,9 +153,10 @@ class Region{
 		System.out.println("SUBDIVIDED REGION");
 		System.out.println("-----------------");
 		test.subDivide();
-		System.out.println("isLeaf test: " + test.isLeaf() + " | Expected output: true");
+		System.out.println("isDivided test: " + test.isDivided() + " | Expected output: true");
 		System.out.println("isEmpty test: " + test.isEmpty() + " | Exepcted output: false");
 		System.out.println("storesPoint test: " + test.storesPoint() + " | Expected output: false");
+		System.out.println("getPoint test: " + test.SgetPoint() + " | Expected output: 10,10");
 		System.out.println("containsLocation(10,10) test: " + test.containsLocation(new Point(10,10)) + " | expected output: true");
 		System.out.println("containsLocation(10,100) test: " + test.containsLocation(new Point(10,100)) + " | expected output: true");
 		System.out.println("containsLocation(10,101) test: " + test.containsLocation(new Point(10,101)) + " | expected output: false");
@@ -166,7 +167,7 @@ class Region{
 		// 	System.out.println(region.Y1);
 		// }
 
-		System.out.println(test.isLeaf());
+		System.out.println(test.isDivided());
 
 	}
 
