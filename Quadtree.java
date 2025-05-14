@@ -3,7 +3,13 @@ package DaiToku;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Exception;
+import java.io.File;
+import java.util.Scanner;
+import java.io.FileNotFoundException;
 
+/**
+ * Quadtree made for storing RidePt
+ */
 public class Quadtree implements Graph{
 	public final int TOT_X;
 	public final int TOT_Y;
@@ -32,7 +38,8 @@ public class Quadtree implements Graph{
 		}
 		// Base case 2: Duplicate ride
 		else if (!currRegion.isDivided() && insertRide.equals(currRegion.storedRidePt)) {
-			currRegion.storedRidePt.addRide();
+			// Add to number of rides instead of replacing
+			currRegion.storedRidePt.addRides(insertRide.numRides());
 		}
 		// Recursive case 1: no space in region and no divisions
 		else if (!currRegion.isDivided()) {
@@ -97,7 +104,7 @@ public class Quadtree implements Graph{
 	}
 
 	/**
-	 *  Gets number of Rides in a certain branch 
+	 *  Gets number of Rides in the quadtree
 	 */
 	public int size() {
 		return countRides(root);
@@ -118,8 +125,40 @@ public class Quadtree implements Graph{
 		}
 	}
 
+	/**
+	 * Injests CSV of coordinates into the quadtree
+	 * Coordinates are represented as six digit numbers as 
+	 * the quadtree only takes integers
+	 * Move this to HeatMap.java
+	 */
+	public void injestCSV(File csv) {
+		try{
+			Scanner scanner = new Scanner(csv);
+			// Skip first line
+			scanner.nextLine();
+
+			while (scanner.hasNextLine()) {
+				String currLine = scanner.nextLine().trim();
+				String[] lineArray = currLine.split(",");
+				double x = Double.parseDouble(lineArray[0].substring(0, 7));
+				double y = Double.parseDouble(lineArray[1].substring(0, 7));
+				int convertedX = (int) (x * 10000);
+				int convertedY = (int) (y * 10000);
+				int numRides = Integer.parseInt(lineArray[2]);
+				insert(new RidePt(convertedX, convertedY, numRides));
+
+			}
+		}
+
+		catch(FileNotFoundException e){
+			 System.err.println("File not found: " + e.getMessage());
+		}
+
+	}
+
+
 	public static void main(String[] args) {
-		Quadtree testQuad = new Quadtree(100, 100, 2);
+		Quadtree testQuad = new Quadtree(1000000, 1000000, 2);
 		testQuad.insert(new RidePt(10,10));
 		testQuad.insert(new RidePt(20,10));
 		testQuad.insert(new RidePt(20,10));
@@ -127,5 +166,8 @@ public class Quadtree implements Graph{
 		System.out.println(testQuad.root.SW.SW.SW.storesRidePt());
 		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
+		File csv = new File("nocommas.csv");
+		testQuad.injestCSV(csv);
+		System.out.println(testQuad.size());
 	}
 }
