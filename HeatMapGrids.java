@@ -136,10 +136,10 @@ public class HeatMapGrids extends JComponent {
         // Smaller regions get darker colors
         // Max area is the full quadtree area
         int maxArea = quadtree.TOT_X * quadtree.TOT_Y;
-        float ratio =  numPoints*100;//(float) area / maxArea;
+        float ratio =  numPoints / quadtree.size();//(float) area / maxArea;
         
         // Create a color that ranges from dark blue to light blue based on size
-        int colorValue = Math.min(255, (int)(ratio * 255));
+        int colorValue = (int) (ratio * 255);
         Color regionColor = new Color(colorValue, colorValue, 255); // Blue shade
         
         // Store the color for this region
