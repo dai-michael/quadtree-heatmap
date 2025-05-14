@@ -129,7 +129,7 @@ public class Quadtree implements Graph{
 	 * Injests CSV of coordinates into the quadtree
 	 * Coordinates are represented as six digit numbers as 
 	 * the quadtree only takes integers
-	 * Move this to HeatMap.java
+	 * Move this to a seperate file QuadtreeDataAdapter
 	 */
 	public void injestCSV(File csv) {
 		try{
