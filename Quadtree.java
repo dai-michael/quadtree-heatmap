@@ -94,6 +94,13 @@ public class Quadtree implements Graph{
 	}
 
 	/**
+	 *  Gets number of Rides in a certain branch 
+	 */
+	public int size() {
+		return countRides(root);
+	}
+
+	/**
 	 * Initialize quadtree with regions going down to specified depth
 	 */
 	public void init(Region region, int currDepth) {
