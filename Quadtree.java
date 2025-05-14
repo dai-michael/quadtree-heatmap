@@ -165,8 +165,15 @@ public class Quadtree implements Graph{
 		System.out.println(testQuad.root.SW.SW.SW.storesRidePt());
 		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
+
+		// Injest file test
 		File csv = new File("rides.csv");
 		testQuad.injestCSV(csv);
 		System.out.println(testQuad.size());
+		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW));
+		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW.NE));
+		System.out.println("Southern quadrants should add up to above one");
+		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW.NE.SW));
+		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW.NE.SE));
 	}
 }
