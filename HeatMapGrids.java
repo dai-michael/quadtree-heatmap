@@ -13,9 +13,13 @@ public class HeatMapGrids extends JComponent {
     private Quadtree quadtree;
     private boolean colorBySize = false;
     private Map<Region, Color> regionColors = new HashMap<>();
+    private int renderDepth;
+    private int maxRenderDepth;
 
     public HeatMapGrids(Quadtree quad) {
         this.quadtree = quad;
+        maxRenderDepth = quadtree.getDefaultDepth();
+        renderDepth = maxRenderDepth;
         // … set up mouse listeners for pan/zoom, etc.
     }
 
@@ -32,15 +36,21 @@ public class HeatMapGrids extends JComponent {
         } else {
             // Draw just boundaries in black
             g2.setColor(Color.BLACK);
-            drawBoundaries(g2, quadtree.getRoot(), 0, 5);
+            drawBoundaries(g2, quadtree.getRoot());
         }
     }
 
     /**
      * Recursively walks the quadtree and draws each region's outline.
      */
-    public void drawBoundaries(Graphics2D g2, Region region, int currDepth ,int maxDepth) {
-        if (currDepth > maxDepth) {
+    public void drawBoundaries(Graphics2D g2, Region region) {
+        drawBoundariesHelper(g2, quadtree.getRoot(), 0, renderDepth);
+    }
+
+
+    public void drawBoundariesHelper(Graphics2D g2, Region region, int currDepth, int renderDepth) {
+        // Base case: depth exceeds depth we want to render at
+        if (currDepth > renderDepth) {
             return;
         }
 
@@ -56,7 +66,7 @@ public class HeatMapGrids extends JComponent {
         // 3) recurse if subdivided
         if (region.isDivided()) {
             for (Region child : region.subregionList) {
-                drawBoundaries(g2, child, currDepth + 1, maxDepth);
+                drawBoundariesHelper(g2, child, currDepth + 1, renderDepth);
             }
         }
     }
@@ -65,6 +75,15 @@ public class HeatMapGrids extends JComponent {
      * Draw regions with colors based on their size
      */
     public void drawColoredRegions(Graphics2D g2, Region region) {
+        drawColoredRegionsHelper(g2, quadtree.getRoot(), 0, renderDepth);
+    }
+
+    public void drawColoredRegionsHelper(Graphics2D g2, Region region, int currDepth, int renderDepth) {
+        // Base case: depth exceeds depth we want to render at
+        if (currDepth > renderDepth) {
+            return;
+        }
+
         // map quadtree coordinates → pixels
         int x      = region.X1 * CELL_SIZE;
         int y      = region.Y1 * CELL_SIZE;
@@ -83,7 +102,7 @@ public class HeatMapGrids extends JComponent {
         // Recurse if subdivided
         if (region.isDivided()) {
             for (Region child : region.subregionList) {
-                drawColoredRegions(g2, child);
+                drawColoredRegionsHelper(g2, child, currDepth + 1, renderDepth);
             }
         }
     }
@@ -117,7 +136,7 @@ public class HeatMapGrids extends JComponent {
         // Smaller regions get darker colors
         // Max area is the full quadtree area
         int maxArea = quadtree.TOT_X * quadtree.TOT_Y;
-        float ratio =  numPoints;//(float) area / maxArea;
+        float ratio =  numPoints*100;//(float) area / maxArea;
         
         // Create a color that ranges from dark blue to light blue based on size
         int colorValue = Math.min(255, (int)(ratio * 255));
