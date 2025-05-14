@@ -11,8 +11,17 @@ class RidePt extends Point{
 		numRides = 1;
 	}
 
+	public RidePt(int x, int y, int numRides) {
+		super(x, y);
+		this.numRides = numRides;
+	}
+
 	public void addRide() {
 		numRides++;
+	}
+
+	public void addRides(int rides) {
+		numRides += rides;
 	}
 
 	public boolean equals(Point point) {
