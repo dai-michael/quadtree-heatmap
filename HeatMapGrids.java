@@ -32,14 +32,18 @@ public class HeatMapGrids extends JComponent {
         } else {
             // Draw just boundaries in black
             g2.setColor(Color.BLACK);
-            drawBoundaries(g2, quadtree.getRoot());
+            drawBoundaries(g2, quadtree.getRoot(), 0, 5);
         }
     }
 
     /**
      * Recursively walks the quadtree and draws each region's outline.
      */
-    public void drawBoundaries(Graphics2D g2, Region region) {
+    public void drawBoundaries(Graphics2D g2, Region region, int currDepth ,int maxDepth) {
+        if (currDepth > maxDepth) {
+            return;
+        }
+
         // map quadtree coordinates → pixels
         int x      = region.X1 * CELL_SIZE;
         int y      = region.Y1 * CELL_SIZE;
@@ -52,7 +56,7 @@ public class HeatMapGrids extends JComponent {
         // 3) recurse if subdivided
         if (region.isDivided()) {
             for (Region child : region.subregionList) {
-                drawBoundaries(g2, child);
+                drawBoundaries(g2, child, currDepth + 1, maxDepth);
             }
         }
     }
@@ -107,7 +111,7 @@ public class HeatMapGrids extends JComponent {
         int width = region.X2 - region.X1;
         int height = region.Y2 - region.Y1;
         int area = width * height;
-        int numPoints = quadtree.countPoints(region);
+        int numPoints = quadtree.countRides(region);
 
         // Calculate color intensity based on size
         // Smaller regions get darker colors

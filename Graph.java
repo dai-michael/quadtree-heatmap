@@ -5,12 +5,12 @@ public interface Graph{
 	/**
 	 *  Inserts a new cooridnate pair 
 	 */
-	public abstract void insert(Point insertPoint);
+	public abstract void insert(Ride insertPoint);
 
 	/** 
 	 *  Gets number of points in a certain branch 
 	 */
-	public abstract int countPoints(Region currRegion);
+	public abstract int countRides(Region currRegion);
 
 	/** 
 	 *  Gets number of points in a certain branch 

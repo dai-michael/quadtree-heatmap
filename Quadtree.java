@@ -1,6 +1,5 @@
 package DaiToku;
 
-import java.awt.Point;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.lang.Exception;
@@ -22,38 +21,38 @@ public class Quadtree implements Graph{
 	/** 
 	 * Inserts a new cooridnate pair 
 	 */
-	public void insert(Point insertPoint) {
-		insertHelper(insertPoint, root);
+	public void insert(Ride insertRide) {
+		insertHelper(insertRide, root);
 	}
 
-	public void insertHelper(Point insertPoint, Region currRegion) {
+	public void insertHelper(Ride insertRide, Region currRegion) {
 		// Base case: has space to insert
 		if (currRegion.isEmpty()) {
-			currRegion.setPoint(insertPoint);
+			currRegion.setRide(insertRide);
 		}
 		// Recursive case 1: no space in region and no divisions
 		else if (!currRegion.isDivided()) {
-			resolveCollision(currRegion, insertPoint, currRegion.getPoint());
+			resolveCollision(currRegion, insertRide, currRegion.getRide());
 		}
 		// Recursive case 2: region is divided
 		else {
-			insertHelper(insertPoint, currRegion.findSubregion(insertPoint));
+			insertHelper(insertRide, currRegion.findSubregion(insertRide));
 		}
 	}
 
-	public void resolveCollision(Region currRegion, Point point1, Point point2) {
+	public void resolveCollision(Region currRegion, Ride Ride1, Ride Ride2) {
 		currRegion.subDivide();
-		Region subregion1 = currRegion.findSubregion(point1);
-		Region subregion2 = currRegion.findSubregion(point2);
+		Region subregion1 = currRegion.findSubregion(Ride1);
+		Region subregion2 = currRegion.findSubregion(Ride2);
 
-		// Recursive step: Both regions which the point lies in is the same
+		// Recursive step: Both regions which the Ride lies in is the same
 		if (subregion1 == subregion2) {
-			resolveCollision(subregion1, point1, point2);
+			resolveCollision(subregion1, Ride1, Ride2);
 		}
-		// Base case: If regions are different, set points to those regions
+		// Base case: If regions are different, set Rides to those regions
 		else {
-			subregion1.setPoint(point1);
-			subregion2.setPoint(point2);
+			subregion1.setRide(Ride1);
+			subregion2.setRide(Ride2);
 		}
 	}
 
@@ -66,23 +65,23 @@ public class Quadtree implements Graph{
 
 
 	/**
-	 *  Gets number of points in a certain branch 
+	 *  Gets number of Rides in a certain branch 
 	 */
-	public int countPoints(Region currRegion) {
+	public int countRides(Region currRegion) {
 		// Base case 1: region is empty
 		if (currRegion.isEmpty()) {
 			return 0;
 		}
-		// Base case 2: region contains a point
-		if (currRegion.storesPoint()) {
+		// Base case 2: region contains a Ride
+		if (currRegion.storesRide()) {
 			return 1;
 		}
-		// Recursive step: for every subregion count points
-		int numPoints = 0;
+		// Recursive step: for every subregion count Rides
+		int numRides = 0;
 		for (Region region : currRegion.subregionList) {
-			numPoints += countPoints(region);
+			numRides += countRides(region);
 		}
-		return numPoints;
+		return numRides;
 	}
 
 	/**
@@ -102,11 +101,11 @@ public class Quadtree implements Graph{
 
 	public static void main(String[] args) {
 		Quadtree testQuad = new Quadtree(100, 100, 2);
-		testQuad.insert(new Point(10,10));
-		testQuad.insert(new Point(20,20));
-		System.out.println(testQuad.root.SW.SW.storesPoint());
-		System.out.println(testQuad.root.SW.SW.SW.storesPoint());
-		System.out.println(testQuad.countPoints(testQuad.root));
+		testQuad.insert(new Ride(10,10));
+		testQuad.insert(new Ride(20,20));
+		System.out.println(testQuad.root.SW.SW.storesRide());
+		System.out.println(testQuad.root.SW.SW.SW.storesRide());
+		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
 	}
 }

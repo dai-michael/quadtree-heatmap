@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.Point;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -23,6 +24,9 @@ public class HeatMap extends JFrame{
 	public HeatMapGrids grid;
     public HeatMap(int totalWidth, int totalHeight, int depth) {
         Quadtree quad = new Quadtree(totalWidth, totalHeight, depth);
+        quad.insert(new Ride(10,10));
+        quad.insert(new Ride(11,10));
+
         grid = new HeatMapGrids(quad);
 
         // wrap in a scroll pane if you like automatic scrollbars
@@ -59,6 +63,7 @@ public class HeatMap extends JFrame{
     public static void main(String[] args) {
         // e.g. a 100×100 quadtree at depth 4
         new HeatMap(100, 100, 4);
+
     }
 }
 

@@ -1,5 +1,4 @@
 package DaiToku;
-import java.awt.Point;
 
 class Region{
 	public final int X1;
@@ -11,9 +10,9 @@ class Region{
 	public Region SW;
 	public Region NW;
 	public Region[] subregionList;
-	public Point coord;
+	public Ride coord;
 	// Whether or not region has subregions
-	// NOT whether or not there is a point assigned
+	// NOT whether or not there is a Ride assigned
 	private boolean isDivided; 
 
 	public Region(int x1, int y1, int x2, int y2) {
@@ -24,7 +23,7 @@ class Region{
 		this.isDivided = false;
 	}
 
-	public Region(int x1, int y1, int x2, int y2, Point coord) {
+	public Region(int x1, int y1, int x2, int y2, Ride coord) {
 		this.X1 = x1;
 		this.Y1 = y1;
 		this.X2 = x2;
@@ -34,11 +33,11 @@ class Region{
 	}
 
 	/** 
-	 *  Set cooridnate of point in terminal node
+	 *  Set cooridnate of Ride in terminal node
 	 * 	Return true if successfuly completed
 	 * 	Return false is unsuccessful
 	 */
-	public void setPoint(Point coord) {
+	public void setRide(Ride coord) {
 		if (isDivided == false) {
 			this.coord = coord;
 		}
@@ -48,9 +47,9 @@ class Region{
 	}
 
 	/**
-	 * Get current stored point
+	 * Get current stored Ride
 	 */
-	public Point getPoint() {
+	public Ride getRide() {
 		return coord;
 	}
 
@@ -75,11 +74,11 @@ class Region{
 	}
 
 	/* 
-	 * Return if a point location lies in that region
+	 * Return if a Ride location lies in that region
 	 */
-	public boolean containsLocation(Point currPoint) {
-		int x = (int) currPoint.getX();
-		int y = (int) currPoint.getY();
+	public boolean containsLocation(Ride currRide) {
+		int x = (int) currRide.getX();
+		int y = (int) currRide.getY();
 		if (x >= X1 && x <= X2 && y >= Y1 && y <= Y2) {
 			return true;
 		}
@@ -87,17 +86,17 @@ class Region{
 	}
 
 	/* 
-	 * Return if the region stores a point
+	 * Return if the region stores a Ride
 	 */
-	public boolean storesPoint() {
+	public boolean storesRide() {
 		return coord != null;
 	}
 
 	/* 
-	 * Return if the region is a leaf and has no points
+	 * Return if the region is a leaf and has no Rides
 	 */
 	public boolean isEmpty() {
-		return !isDivided() && !storesPoint();
+		return !isDivided() && !storesRide();
 	}
 
 	/** 
@@ -121,20 +120,20 @@ class Region{
 	}
 
 	/**
-	 * Find region subdivision that the point lies in
+	 * Find region subdivision that the Ride lies in
 	 */
-	public Region findSubregion(Point currPoint) {
+	public Region findSubregion(Ride currRide) {
 		if (!isDivided()) {
 			// Throw an exception because there are no regions to search through 
 		}
 
 		for (Region region : subregionList) {
-			if (region.containsLocation(currPoint)) {
+			if (region.containsLocation(currRide)) {
 				return region;
 			}
 		}
 
-		// Throw an exception because point out of acceptable area
+		// Throw an exception because Ride out of acceptable area
 		return null;
 	}
 
@@ -144,22 +143,22 @@ class Region{
 	}
 
 	public static void main(String[] args) {
-		Region test = new Region(0, 0, 100, 100, new Point(10,10));
+		Region test = new Region(0, 0, 100, 100, new Ride(10,10));
 		System.out.println("isDivided test: " + test.isDivided() + " | Expected output: false");
 		System.out.println("isEmpty test: " + test.isEmpty() + " | Exepcted output: false");
-		System.out.println("storesPoint test: " + test.storesPoint() + " | Expected output: true");
-		System.out.println("getPoint test: " + test.getPoint() + " | Expected output: 10,10");
+		System.out.println("storesRide test: " + test.storesRide() + " | Expected output: true");
+		System.out.println("getRide test: " + test.getRide() + " | Expected output: 10,10");
 		System.out.println("-----------------");
 		System.out.println("SUBDIVIDED REGION");
 		System.out.println("-----------------");
 		test.subDivide();
 		System.out.println("isDivided test: " + test.isDivided() + " | Expected output: true");
 		System.out.println("isEmpty test: " + test.isEmpty() + " | Exepcted output: false");
-		System.out.println("storesPoint test: " + test.storesPoint() + " | Expected output: false");
-		System.out.println("getPoint test: " + test.SgetPoint() + " | Expected output: 10,10");
-		System.out.println("containsLocation(10,10) test: " + test.containsLocation(new Point(10,10)) + " | expected output: true");
-		System.out.println("containsLocation(10,100) test: " + test.containsLocation(new Point(10,100)) + " | expected output: true");
-		System.out.println("containsLocation(10,101) test: " + test.containsLocation(new Point(10,101)) + " | expected output: false");
+		System.out.println("storesRide test: " + test.storesRide() + " | Expected output: false");
+		System.out.println("getRide test: " + test.getRide() + " | Expected output: 10,10");
+		System.out.println("containsLocation(10,10) test: " + test.containsLocation(new Ride(10,10)) + " | expected output: true");
+		System.out.println("containsLocation(10,100) test: " + test.containsLocation(new Ride(10,100)) + " | expected output: true");
+		System.out.println("containsLocation(10,101) test: " + test.containsLocation(new Ride(10,101)) + " | expected output: false");
 		System.out.println(test.subregionList);
 
 		// for (Region region : test.subregionList) {
