@@ -5,7 +5,7 @@ public interface Graph{
 	/**
 	 *  Inserts a new cooridnate pair 
 	 */
-	public abstract void insert(Ride insertPoint);
+	public abstract void insert(RidePt insertPoint);
 
 	/** 
 	 *  Gets number of points in a certain branch 

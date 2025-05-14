@@ -24,8 +24,8 @@ public class HeatMap extends JFrame{
 	public HeatMapGrids grid;
     public HeatMap(int totalWidth, int totalHeight, int depth) {
         Quadtree quad = new Quadtree(totalWidth, totalHeight, depth);
-        quad.insert(new Ride(10,10));
-        quad.insert(new Ride(11,10));
+        quad.insert(new RidePt(10,10));
+        quad.insert(new RidePt(11,10));
 
         grid = new HeatMapGrids(quad);
 

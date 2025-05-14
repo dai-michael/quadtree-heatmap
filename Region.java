@@ -10,9 +10,9 @@ class Region{
 	public Region SW;
 	public Region NW;
 	public Region[] subregionList;
-	public Ride coord;
+	public RidePt storedRidePt;
 	// Whether or not region has subregions
-	// NOT whether or not there is a Ride assigned
+	// NOT whether or not there is a RidePt assigned
 	private boolean isDivided; 
 
 	public Region(int x1, int y1, int x2, int y2) {
@@ -23,34 +23,26 @@ class Region{
 		this.isDivided = false;
 	}
 
-	public Region(int x1, int y1, int x2, int y2, Ride coord) {
+	public Region(int x1, int y1, int x2, int y2, RidePt storedRidePt) {
 		this.X1 = x1;
 		this.Y1 = y1;
 		this.X2 = x2;
 		this.Y2 = y2;
-		this.coord = coord;
+		this.storedRidePt = storedRidePt;
 		this.isDivided = false;
 	}
 
 	/** 
-	 *  Set cooridnate of Ride in terminal node
-	 * 	Return true if successfuly completed
-	 * 	Return false is unsuccessful
+	 *  Set cooridnate of RidePt in terminal node
+	 *  Not to be confused with insert in quadtree
 	 */
-	public void setRide(Ride coord) {
+	public void setRidePt(RidePt storedRidePt) {
 		if (isDivided == false) {
-			this.coord = coord;
+			this.storedRidePt = storedRidePt;
 		}
 		else {
 			// throw an exception
 		}
-	}
-
-	/**
-	 * Get current stored Ride
-	 */
-	public Ride getRide() {
-		return coord;
 	}
 
 	/**
@@ -62,7 +54,7 @@ class Region{
 		this.SW = SW;
 		this.NW = NW;
 		subregionList = new Region[]{NE, SE, SW, NW};
-		this.coord = null;
+		this.storedRidePt = null;
 		this.isDivided = true;
 	}
 
@@ -74,11 +66,11 @@ class Region{
 	}
 
 	/* 
-	 * Return if a Ride location lies in that region
+	 * Return if a RidePt location lies in that region
 	 */
-	public boolean containsLocation(Ride currRide) {
-		int x = (int) currRide.getX();
-		int y = (int) currRide.getY();
+	public boolean containsLocation(RidePt currRidePt) {
+		int x = (int) currRidePt.getX();
+		int y = (int) currRidePt.getY();
 		if (x >= X1 && x <= X2 && y >= Y1 && y <= Y2) {
 			return true;
 		}
@@ -86,17 +78,17 @@ class Region{
 	}
 
 	/* 
-	 * Return if the region stores a Ride
+	 * Return if the region stores a RidePt
 	 */
-	public boolean storesRide() {
-		return coord != null;
+	public boolean storesRidePt() {
+		return storedRidePt != null;
 	}
 
 	/* 
-	 * Return if the region is a leaf and has no Rides
+	 * Return if the region is a leaf and has no RidePts
 	 */
 	public boolean isEmpty() {
-		return !isDivided() && !storesRide();
+		return !isDivided() && !storesRidePt();
 	}
 
 	/** 
@@ -120,45 +112,43 @@ class Region{
 	}
 
 	/**
-	 * Find region subdivision that the Ride lies in
+	 * Find region subdivision that the RidePt lies in
 	 */
-	public Region findSubregion(Ride currRide) {
+	public Region findSubregion(RidePt currRidePt) {
 		if (!isDivided()) {
 			// Throw an exception because there are no regions to search through 
 		}
 
 		for (Region region : subregionList) {
-			if (region.containsLocation(currRide)) {
+			if (region.containsLocation(currRidePt)) {
 				return region;
 			}
 		}
 
-		// Throw an exception because Ride out of acceptable area
+		// Throw an exception because RidePt out of acceptable area
 		return null;
 	}
 
 	public String toString() {
-		String output = "Region coordinates: (%d, %d), (%d, %d)";
+		String output = "Region storedRidePtinates: (%d, %d), (%d, %d)";
 		return String.format(output, X1, Y1, X2, Y2);
 	}
 
 	public static void main(String[] args) {
-		Region test = new Region(0, 0, 100, 100, new Ride(10,10));
+		Region test = new Region(0, 0, 100, 100, new RidePt(10,10));
 		System.out.println("isDivided test: " + test.isDivided() + " | Expected output: false");
 		System.out.println("isEmpty test: " + test.isEmpty() + " | Exepcted output: false");
-		System.out.println("storesRide test: " + test.storesRide() + " | Expected output: true");
-		System.out.println("getRide test: " + test.getRide() + " | Expected output: 10,10");
+		System.out.println("storesRidePt test: " + test.storesRidePt() + " | Expected output: true");
 		System.out.println("-----------------");
 		System.out.println("SUBDIVIDED REGION");
 		System.out.println("-----------------");
 		test.subDivide();
 		System.out.println("isDivided test: " + test.isDivided() + " | Expected output: true");
 		System.out.println("isEmpty test: " + test.isEmpty() + " | Exepcted output: false");
-		System.out.println("storesRide test: " + test.storesRide() + " | Expected output: false");
-		System.out.println("getRide test: " + test.getRide() + " | Expected output: 10,10");
-		System.out.println("containsLocation(10,10) test: " + test.containsLocation(new Ride(10,10)) + " | expected output: true");
-		System.out.println("containsLocation(10,100) test: " + test.containsLocation(new Ride(10,100)) + " | expected output: true");
-		System.out.println("containsLocation(10,101) test: " + test.containsLocation(new Ride(10,101)) + " | expected output: false");
+		System.out.println("storesRidePt test: " + test.storesRidePt() + " | Expected output: false");
+		System.out.println("containsLocation(10,10) test: " + test.containsLocation(new RidePt(10,10)) + " | expected output: true");
+		System.out.println("containsLocation(10,100) test: " + test.containsLocation(new RidePt(10,100)) + " | expected output: true");
+		System.out.println("containsLocation(10,101) test: " + test.containsLocation(new RidePt(10,101)) + " | expected output: false");
 		System.out.println(test.subregionList);
 
 		// for (Region region : test.subregionList) {

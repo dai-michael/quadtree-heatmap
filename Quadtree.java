@@ -21,18 +21,22 @@ public class Quadtree implements Graph{
 	/** 
 	 * Inserts a new cooridnate pair 
 	 */
-	public void insert(Ride insertRide) {
+	public void insert(RidePt insertRide) {
 		insertHelper(insertRide, root);
 	}
 
-	public void insertHelper(Ride insertRide, Region currRegion) {
+	private void insertHelper(RidePt insertRide, Region currRegion) {
 		// Base case: has space to insert
 		if (currRegion.isEmpty()) {
-			currRegion.setRide(insertRide);
+			currRegion.setRidePt(insertRide);
+		}
+		// Base case 2: Duplicate ride
+		else if (!currRegion.isDivided() && insertRide.equals(currRegion.storedRidePt)) {
+			currRegion.storedRidePt.addRide();
 		}
 		// Recursive case 1: no space in region and no divisions
 		else if (!currRegion.isDivided()) {
-			resolveCollision(currRegion, insertRide, currRegion.getRide());
+			resolveCollision(currRegion, insertRide, currRegion.storedRidePt);
 		}
 		// Recursive case 2: region is divided
 		else {
@@ -40,7 +44,12 @@ public class Quadtree implements Graph{
 		}
 	}
 
-	public void resolveCollision(Region currRegion, Ride Ride1, Ride Ride2) {
+	/**
+	 * Resolve collision where two points occupy same leaf
+	 * Assumes both rides are different
+	 * Assumption is met in insertHelper as it already checks for duplicates
+	 */
+	private void resolveCollision(Region currRegion, RidePt Ride1, RidePt Ride2) {
 		currRegion.subDivide();
 		Region subregion1 = currRegion.findSubregion(Ride1);
 		Region subregion2 = currRegion.findSubregion(Ride2);
@@ -51,8 +60,8 @@ public class Quadtree implements Graph{
 		}
 		// Base case: If regions are different, set Rides to those regions
 		else {
-			subregion1.setRide(Ride1);
-			subregion2.setRide(Ride2);
+			subregion1.setRidePt(Ride1);
+			subregion2.setRidePt(Ride2);
 		}
 	}
 
@@ -73,8 +82,8 @@ public class Quadtree implements Graph{
 			return 0;
 		}
 		// Base case 2: region contains a Ride
-		if (currRegion.storesRide()) {
-			return 1;
+		if (currRegion.storesRidePt()) {
+			return currRegion.storedRidePt.numRides();
 		}
 		// Recursive step: for every subregion count Rides
 		int numRides = 0;
@@ -101,10 +110,11 @@ public class Quadtree implements Graph{
 
 	public static void main(String[] args) {
 		Quadtree testQuad = new Quadtree(100, 100, 2);
-		testQuad.insert(new Ride(10,10));
-		testQuad.insert(new Ride(20,20));
-		System.out.println(testQuad.root.SW.SW.storesRide());
-		System.out.println(testQuad.root.SW.SW.SW.storesRide());
+		testQuad.insert(new RidePt(10,10));
+		testQuad.insert(new RidePt(20,10));
+		testQuad.insert(new RidePt(20,10));
+		System.out.println(testQuad.root.SW.SW.storesRidePt());
+		System.out.println(testQuad.root.SW.SW.SW.storesRidePt());
 		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
 	}
