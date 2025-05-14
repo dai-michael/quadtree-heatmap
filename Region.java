@@ -130,7 +130,7 @@ class Region{
 	}
 
 	public String toString() {
-		String output = "Region storedRidePtinates: (%d, %d), (%d, %d)";
+		String output = "Region ride coordinates: (%d, %d), (%d, %d)";
 		return String.format(output, X1, Y1, X2, Y2);
 	}
 
