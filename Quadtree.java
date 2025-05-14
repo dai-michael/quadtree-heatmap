@@ -7,7 +7,7 @@ import java.lang.Exception;
 public class Quadtree implements Graph{
 	public final int TOT_X;
 	public final int TOT_Y;
-	public int defaultDepth;
+	private int defaultDepth;
 	private Region root;
 
 	public Quadtree(int x, int y, int depth) {
@@ -72,6 +72,9 @@ public class Quadtree implements Graph{
 		return root;
 	}
 
+	public int getDefaultDepth() {
+		return defaultDepth;
+	}
 
 	/**
 	 *  Gets number of Rides in a certain branch 
