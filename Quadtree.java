@@ -146,7 +146,6 @@ public class Quadtree implements Graph{
 				int convertedY = (int) (y * 10000);
 				int numRides = Integer.parseInt(lineArray[2]);
 				insert(new RidePt(convertedX, convertedY, numRides));
-
 			}
 		}
 
@@ -166,7 +165,7 @@ public class Quadtree implements Graph{
 		System.out.println(testQuad.root.SW.SW.SW.storesRidePt());
 		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
-		File csv = new File("nocommas.csv");
+		File csv = new File("rides.csv");
 		testQuad.injestCSV(csv);
 		System.out.println(testQuad.size());
 	}
