@@ -62,7 +62,7 @@ public class HeatMap extends JFrame{
 
     public static void main(String[] args) {
         // e.g. a 100×100 quadtree at depth 4
-        new HeatMap(100, 100, 4);
+        new HeatMap(100, 100, 1);
 
     }
 }
