@@ -19,11 +19,14 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import java.io.File;
+
 public class HeatMap extends JFrame{
 
 	public HeatMapGrids grid;
     public HeatMap(int totalWidth, int totalHeight, int depth) {
         Quadtree quad = new Quadtree(totalWidth, totalHeight, depth);
+        quad.injestCSV(new File("toyRides.txt"));
         quad.insert(new RidePt(10,10));
         quad.insert(new RidePt(11,10));
 
