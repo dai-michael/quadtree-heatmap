@@ -125,37 +125,6 @@ public class Quadtree implements Graph{
 		}
 	}
 
-	/**
-	 * Injests CSV of coordinates into the quadtree
-	 * Coordinates are represented as six digit numbers as 
-	 * the quadtree only takes integers
-	 * Move this to a seperate file QuadtreeDataAdapter
-	 */
-	public void injestCSV(File csv) {
-		try{
-			Scanner scanner = new Scanner(csv);
-			// Skip first line
-			scanner.nextLine();
-
-			while (scanner.hasNextLine()) {
-				String currLine = scanner.nextLine().trim();
-				String[] lineArray = currLine.split(",");
-				double x = Double.parseDouble(lineArray[0].substring(0, 7));
-				double y = Double.parseDouble(lineArray[1].substring(0, 7));
-				int convertedX = (int) (x * 10000);
-				int convertedY = (int) (y * 10000);
-				int numRides = Integer.parseInt(lineArray[2]);
-				insert(new RidePt(convertedX, convertedY, numRides));
-			}
-		}
-
-		catch(FileNotFoundException e){
-			 System.err.println("File not found: " + e.getMessage());
-		}
-
-	}
-
-
 	public static void main(String[] args) {
 		Quadtree testQuad = new Quadtree(1000000, 1000000, 2);
 		testQuad.insert(new RidePt(10,10));
@@ -166,14 +135,5 @@ public class Quadtree implements Graph{
 		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
 
-		// Injest file test
-		File csv = new File("rides.csv");
-		testQuad.injestCSV(csv);
-		System.out.println(testQuad.size());
-		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW));
-		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW.NE));
-		System.out.println("Southern quadrants should add up to above one");
-		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW.NE.SW));
-		System.out.println(testQuad.countRides(testQuad.root.NW.SE.NE.NW.NE.SE));
 	}
 }

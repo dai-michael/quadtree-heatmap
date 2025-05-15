@@ -73,9 +73,7 @@ public class QuadtreeAdapter{
 		catch(FileNotFoundException e){
 			 System.err.println("File not found: " + e.getMessage());
 		}		
-
 	}
-
 
 	// Converts floats with 4 decimal places to integer representation for quadtree
 	private RidePt processNextLine(String line) {

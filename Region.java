@@ -116,7 +116,7 @@ class Region{
 	 */
 	public Region findSubregion(RidePt currRidePt) {
 		if (!isDivided()) {
-			// Throw an exception because there are no regions to search through 
+			return null;
 		}
 
 		for (Region region : subregionList) {
