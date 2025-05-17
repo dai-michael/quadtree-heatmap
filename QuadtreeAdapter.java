@@ -67,7 +67,6 @@ public class QuadtreeAdapter{
 			while (scanner.hasNextLine()) {
 				RidePt readPt = processNextLine(scanner.nextLine());
 				quadtree.insert(convertToQuad(readPt));
-				System.out.println("inserted point");
 			}
 		}
 		catch(FileNotFoundException e){
