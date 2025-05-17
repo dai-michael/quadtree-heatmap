@@ -16,7 +16,7 @@ import java.io.File;
 
 /**
  * Single-class HeatMap that builds a quadtree, inserts points,
- * colors each region by ride-count, and supports zoom via mouse wheel.
+ * colors each region by ride-count, and supports zoom via clicking.
  */
 public class HeatMap extends JFrame {
 
@@ -47,17 +47,6 @@ public class HeatMap extends JFrame {
     }
 
     public static void main(String[] args) {
-        // example: 100×100 grid, depth 4
-        // HeatMap frame = new HeatMap(100, 100, 4);
-
-        // // test
-        // frame.addRide(new RidePt(10, 10));
-        // frame.addRide(new RidePt(11, 10));
-        // frame.addRide(new RidePt(90, 10));
-        // frame.addRide(new RidePt(90, 10));
-        // frame.addRide(new RidePt(90, 10));
-        // frame.addRide(new RidePt(90, 10));
-
 
         File csv = new File("rides.csv");
         QuadtreeAdapter test = new QuadtreeAdapter(csv, 6);
@@ -79,7 +68,7 @@ public class HeatMap extends JFrame {
             this.quadtree = quadtree;
             // initial color mapping
             this.maxDepth = quadtree.getDefaultDepth();
-            sizeMultiplier = 0.036;
+            sizeMultiplier = 800.0/quadtree.TOT_X;
             colorGrids();
         }
 
@@ -110,7 +99,7 @@ public class HeatMap extends JFrame {
                 // System.out.println("CurrDepth: " + currDepth + " maxcount: " + maxCount);
                 // System.out.println(region);
                 // System.out.println(maxDepth);
-                double intensity = (double) count / 500000;
+                double intensity = (double) count / 5000;
 
                 int blue;
                 if (intensity > 1) {
@@ -152,24 +141,23 @@ public class HeatMap extends JFrame {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
 
-            double bruh = 1.7;
 
             g2.scale(zoom, zoom);
             for (Map.Entry<Region, Color> e : regionColors.entrySet()) {
                 Region r = e.getKey();
                 g2.setColor(e.getValue());
-                int x = (int) (r.X1 * sizeMultiplier * bruh);
+                int x = (int) (r.X1 * sizeMultiplier);
                 int y = (int) (r.Y1 * sizeMultiplier);
-                int w = (int) ((r.X2 - r.X1) * sizeMultiplier * bruh);
+                int w = (int) ((r.X2 - r.X1) * sizeMultiplier);
                 int h = (int) ((r.Y2 - r.Y1) * sizeMultiplier);
                 g2.fillRect(x, y, w, h);
             }
 
             g2.setColor(Color.BLACK);
             for (Region leaf : regionColors.keySet()) {
-                int x = (int) (leaf.X1 * sizeMultiplier * zoom * bruh);
+                int x = (int) (leaf.X1 * sizeMultiplier * zoom);
                 int y = (int) (leaf.Y1 * sizeMultiplier * zoom);
-                int w = (int) ((leaf.X2 - leaf.X1) * sizeMultiplier * zoom * bruh);
+                int w = (int) ((leaf.X2 - leaf.X1) * sizeMultiplier * zoom);
                 int h = (int) ((leaf.Y2 - leaf.Y1) * sizeMultiplier * zoom);
                 g2.drawRect(x, y, w, h);
             }
