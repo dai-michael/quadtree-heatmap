@@ -10,16 +10,16 @@ import java.io.FileNotFoundException;
 /**
  * Quadtree made for storing RidePt
  */
-public class Quadtree implements Graph{
+public class Quadtree implements Tree{
 	public final int TOT_X;
 	public final int TOT_Y;
-	private int defaultDepth;
+	private final int DEFAULT_DEPTH;
 	private Region root;
 
 	public Quadtree(int x, int y, int depth) {
 		this.TOT_X = x;
 		this.TOT_Y = y;
-		this.defaultDepth = depth;
+		this.DEFAULT_DEPTH = depth;
 		root = new Region(0, 0, TOT_X, TOT_Y);
 		init(root, 0);
 	}
@@ -80,7 +80,7 @@ public class Quadtree implements Graph{
 	}
 
 	public int getDefaultDepth() {
-		return defaultDepth;
+		return DEFAULT_DEPTH;
 	}
 
 	/**
@@ -111,10 +111,37 @@ public class Quadtree implements Graph{
 	}
 
 	/**
+	 * Find and return region which ridepoint is located in
+	 * Finds region at desired depth
+	 * If point not in quadtree, return null
+	 */
+	public Region findRegion(RidePt point) {
+		if (!this.root.containsLocation(point)) {
+			return null;
+		}
+		return findRegionHelper(point, this.root, 0);
+	}
+
+	private Region findRegionHelper(RidePt point, Region currRegion, int currDepth) {
+		for (Region region : currRegion.subregionList) {
+			if (region.containsLocation(point)) {
+				// Base case: desired depth reached
+				if (currDepth >= DEFAULT_DEPTH) return region;
+				// Recursive step: keep searching
+				return findRegionHelper(point, region, currDepth + 1);
+			}
+		}
+		// Return current region if there are no regions in subregion list
+		// This case should never be reached because the quadtree is 
+		// initialized at default depth
+		return currRegion;
+	}
+
+	/**
 	 * Initialize quadtree with regions going down to specified depth
 	 */
 	public void init(Region region, int currDepth) {
-		if (currDepth < defaultDepth) {
+		if (currDepth < DEFAULT_DEPTH) {
 			region.subDivide();
 
 			// Recursively call function again on regions
@@ -126,7 +153,7 @@ public class Quadtree implements Graph{
 	}
 
 	public static void main(String[] args) {
-		Quadtree testQuad = new Quadtree(1000000, 1000000, 2);
+		Quadtree testQuad = new Quadtree(1000000, 1000000, 3);
 		testQuad.insert(new RidePt(10,10));
 		testQuad.insert(new RidePt(20,10));
 		testQuad.insert(new RidePt(20,10));
@@ -134,6 +161,8 @@ public class Quadtree implements Graph{
 		System.out.println(testQuad.root.SW.SW.SW.storesRidePt());
 		System.out.println(testQuad.countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
+		System.out.println(testQuad.findRegion(new RidePt(10,10)));
+		System.out.println(testQuad.findRegion(new RidePt(0,0)));
 
 	}
 }

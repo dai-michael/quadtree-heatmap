@@ -41,7 +41,7 @@ class Region{
 			this.storedRidePt = storedRidePt;
 		}
 		else {
-			// throw an exception
+			// throw an exception because cant store point
 		}
 	}
 

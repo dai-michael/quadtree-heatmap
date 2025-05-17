@@ -1,7 +1,7 @@
 package DaiToku;
 import java.awt.Point;
 
-public interface Graph{
+public interface QuadtreeInterface{
 	/**
 	 *  Inserts a new cooridnate pair 
 	 */
@@ -13,7 +13,7 @@ public interface Graph{
 	public abstract int countRides(Region currRegion);
 
 	/** 
-	 *  Gets number of points in a certain branch 
+	 *  Initializes tree to specified depth
 	 */
 	public abstract void init(Region region, int currDepth);
 
