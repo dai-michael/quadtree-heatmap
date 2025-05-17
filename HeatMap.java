@@ -13,6 +13,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.io.File;
 
+//image imports
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * Single-class HeatMap that builds a quadtree, inserts points,
@@ -63,12 +67,20 @@ public class HeatMap extends JFrame {
         private final Map<Region, Color> regionColors = new HashMap<>();
         private int maxDepth;
         private int zoom = 1;
+        private BufferedImage mapImage;
 
         public MapPanel(Quadtree quadtree) {
             this.quadtree = quadtree;
             // initial color mapping
             this.maxDepth = quadtree.getDefaultDepth();
             sizeMultiplier = 800.0/quadtree.TOT_X;
+
+            try {
+                mapImage = ImageIO.read(new File("image1.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }            
+
             colorGrids();
         }
 
@@ -96,19 +108,22 @@ public class HeatMap extends JFrame {
             if (currDepth >= maxDepth) {
                 // Add color to the thingamabob
                 int count = quadtree.countRides(region);
+                if (count == 0){
+                    return;
+                }
                 // System.out.println("CurrDepth: " + currDepth + " maxcount: " + maxCount);
                 // System.out.println(region);
                 // System.out.println(maxDepth);
                 double intensity = (double) count / 5000;
 
-                int blue;
+                int trancy;
                 if (intensity > 1) {
-                    blue = 255;
+                    trancy = 255;
                 }
                 else {
-                    blue = (int) (intensity * 255);
+                    trancy = (int) (intensity * 255);
                 }
-                regionColors.put(region, new Color(0, 0, blue));
+                regionColors.put(region, new Color(0, 0, 255, trancy));
             }
             // recursive step
             else {
@@ -141,8 +156,14 @@ public class HeatMap extends JFrame {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
 
-
             g2.scale(zoom, zoom);
+            if (mapImage != null) {
+                int w = (int)(quadtree.TOT_X * sizeMultiplier);
+                int h = (int)(quadtree.TOT_Y * sizeMultiplier);
+                g2.drawImage(mapImage, 0, 0, w, h, null);
+            }
+
+
             for (Map.Entry<Region, Color> e : regionColors.entrySet()) {
                 Region r = e.getKey();
                 g2.setColor(e.getValue());
