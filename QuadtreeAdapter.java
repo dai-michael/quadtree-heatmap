@@ -23,10 +23,12 @@ public class QuadtreeAdapter{
 
 	/**
 	 * Injests CSV of coordinates into the quadtree
-	 * Coordinates are represented as six digit numbers as 
+	 * Coordinates are converted into six digit integers as
 	 * the quadtree only takes integers
 	 * Adapter is hardcoded to only accept coordinates in the
 	 * Northwestern hemisphere, as that is our area of interest
+	 * Stores adapted quadtree
+	 * Converts adapted quadtree entries back to coordinates
 	 */
 	public QuadtreeAdapter(File csv, int depth) {
 
@@ -86,8 +88,9 @@ public class QuadtreeAdapter{
 		}		
 	}
 
-	/** Converts floats with 4 decimal places to integer
-	 *  representation for use in quadtree
+	/** 
+	 * Converts floats with 4 decimal places to integer
+	 * representation for use in quadtree
 	 */
 	private RidePt processNextLine(String line) {
 		String[] lineArray = line.trim().split(",");
@@ -99,15 +102,17 @@ public class QuadtreeAdapter{
 		return new RidePt(convertedX, convertedY, numRides);
 	}
 
-	public void insert(RidePt insertPoint) {
-		quadtree.insert(convertToQuad(insertPoint));
-	}
-
+	// Convert processed point into one the quadtree can accept
 	public RidePt convertToQuad(RidePt originalPt) {
 		// Flip x horizontally
 		int newX = (maxX - minX) - (int) (originalPt.getX() - minX);
 		int newY = (maxY - minY) - (int) (originalPt.getY() - minY);
 		return new RidePt(newX, newY, originalPt.numRides());
+	}
+
+	// Insert converted point into quadtree
+	public void insert(RidePt insertPoint) {
+		quadtree.insert(convertToQuad(insertPoint));
 	}
 
 	public static void main(String[] args) {
