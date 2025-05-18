@@ -10,11 +10,11 @@ import java.io.FileNotFoundException;
 /**
  * Quadtree made for storing RidePt
  */
-public class Quadtree implements Tree{
+public class Quadtree implements QuadtreeInterface{
 	public final int TOT_X;
 	public final int TOT_Y;
 	private final int DEFAULT_DEPTH;
-	private Region root;
+	public Region root;
 
 	public Quadtree(int x, int y, int depth) {
 		this.TOT_X = x;
@@ -86,7 +86,7 @@ public class Quadtree implements Tree{
 	/**
 	 *  Gets number of Rides in a certain branch 
 	 */
-	public int countRides(Region currRegion) {
+	public static int countRides(Region currRegion) {
 		// Base case 1: region is empty
 		if (currRegion.isEmpty()) {
 			return 0;
@@ -111,6 +111,26 @@ public class Quadtree implements Tree{
 	}
 
 	/**
+	 *  Gets number of ridePoints in a certain branch 
+	 */
+	public static int countRidePoints(Region currRegion) {
+		// Base case 1: region is empty
+		if (currRegion.isEmpty()) {
+			return 0;
+		}
+		// Base case 2: region contains a Ride
+		if (currRegion.storesRidePt()) {
+			return 1;
+		}
+		// Recursive step: for every subregion count Rides
+		int numRides = 0;
+		for (Region region : currRegion.subregionList) {
+			numRides += countRidePoints(region);
+		}
+		return numRides;
+	}
+
+	/**
 	 * Find and return region which ridepoint is located in
 	 * Finds region at desired depth
 	 * If point not in quadtree, return null
@@ -123,12 +143,18 @@ public class Quadtree implements Tree{
 	}
 
 	private Region findRegionHelper(RidePt point, Region currRegion, int currDepth) {
-		for (Region region : currRegion.subregionList) {
-			if (region.containsLocation(point)) {
-				// Base case: desired depth reached
-				if (currDepth >= DEFAULT_DEPTH) return region;
-				// Recursive step: keep searching
-				return findRegionHelper(point, region, currDepth + 1);
+		// Base case: desired depth reached
+		if (currDepth >= DEFAULT_DEPTH) {
+			return currRegion;
+		}
+
+		if (currRegion.isDivided()) {
+			for (Region region : currRegion.subregionList) {
+				if (region.containsLocation(point)) {
+					System.out.println(currDepth);
+					// Recursive step: keep searching
+					return findRegionHelper(point, region, currDepth + 1);
+				}
 			}
 		}
 		// Return current region if there are no regions in subregion list
@@ -159,7 +185,7 @@ public class Quadtree implements Tree{
 		testQuad.insert(new RidePt(20,10));
 		System.out.println(testQuad.root.SW.SW.storesRidePt());
 		System.out.println(testQuad.root.SW.SW.SW.storesRidePt());
-		System.out.println(testQuad.countRides(testQuad.root));
+		System.out.println(countRides(testQuad.root));
 		System.out.println(testQuad.getRoot());
 		System.out.println(testQuad.findRegion(new RidePt(10,10)));
 		System.out.println(testQuad.findRegion(new RidePt(0,0)));
