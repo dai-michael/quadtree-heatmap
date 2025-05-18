@@ -35,6 +35,10 @@ class RidePt extends Point{
 		return numRides;
 	}
 
+	public String toString() {
+		return x + "," + y;
+	}
+
 	public static void main(String[] args) {
 		RidePt test = new RidePt(10,2);
 		System.out.println(test.numRides);
