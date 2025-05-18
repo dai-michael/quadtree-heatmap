@@ -23,8 +23,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 /**
- * Single-class HeatMap that builds a quadtree, inserts points,
- * colors each region by ride-count, and supports zoom via clicking.
+ * Single-class HeatMap that takes input quadtree
+ * and inserts points, colors each region by ride-count, 
+ * and responds to user clicks with region information.
  */
 public class HeatMap extends JFrame {
 
@@ -57,15 +58,13 @@ public class HeatMap extends JFrame {
     }
 
     /**
-     * Inner panel that does all the painting, quadtree logic, and zooming
+     * Inner panel that does all the painting, quadtree logic
      */
     private class MapPanel extends JComponent {
-        private int maxCount = 1;
         private double sizeMultiplier;
         private final Quadtree quadtree;
         private Map<Region, Color> regionColors;
         private int maxDepth;
-        private int zoom = 1;
         private BufferedImage mapImage;
 
         public MapPanel(Quadtree quadtree) {
@@ -83,16 +82,20 @@ public class HeatMap extends JFrame {
             colorGrids();
         }
 
-        /** Insert a point and refresh color mapping */
+        /** 
+         * Insert a point and refresh color mapping 
+         */
         public void addRide(RidePt pt) {
             quadtree.insert(pt);
             colorGrids();
             repaint();
         }
 
+        /** 
+         * Color grids on heatmap based on ride density
+         */
         public void colorGrids(){ 
             regionColors = new HashMap<>();
-            getMaxCount(quadtree.getRoot(), 0);
             colorGridsHelper(quadtree.getRoot(), 0);
         }
 
@@ -122,27 +125,11 @@ public class HeatMap extends JFrame {
             }
         }
 
-        public void getMaxCount(Region region, int currDepth) {
-            // Base case: desired depth reached
-            if (currDepth >= maxDepth) {
-                // Collect max count
-                int count = Quadtree.countRides(region);
-                if (count > maxCount) maxCount = count;
-            }
-
-            else if (region.isDivided()) {
-                for (Region currRegion : region.subregionList) {
-                    getMaxCount(currRegion, currDepth + 1);
-                }
-            }
-        }
-
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
 
-            g2.scale(zoom, zoom);
             if (mapImage != null) {
                 int w = (int)(quadtree.TOT_X * sizeMultiplier);
                 int h = (int)(quadtree.TOT_Y * sizeMultiplier);
@@ -163,23 +150,18 @@ public class HeatMap extends JFrame {
     }
 
     /**
-     * An inner class to respond to mouse events.
+     * Responds to mouse clicks on map
      */
     private class RegionMouseListener implements MouseListener {
 
-        public RegionMouseListener() {
-            System.out.println("DEBUG: Mouselistener activated");
-        }
-
         /**
-         *  Zooms in if mouse clicked
+         *  Provides extra information on mouse click
          */
         public void mousePressed(MouseEvent event) {
             int x = event.getX();
             int y = event.getY();
 
             // Convert pixel to quadtree point
-            System.out.println(panel.sizeMultiplier);
             int quadX = (int) (x / panel.sizeMultiplier);
             int quadY = (int) (y / panel.sizeMultiplier);
             RidePt currPoint = new RidePt(quadX, quadY);
@@ -189,17 +171,12 @@ public class HeatMap extends JFrame {
                 Region clickedRegion = panel.quadtree.findRegion(currPoint);
                 RidePt botLeft = new RidePt(clickedRegion.X1, clickedRegion.Y1);
                 RidePt topRight = new RidePt(clickedRegion.X2, clickedRegion.Y2);
-                System.out.println(botLeft);
 
                 String info = "Number of cities in region: " + Quadtree.countRidePoints(clickedRegion);
                 info += "\nTotal origin rides: " + Quadtree.countRides(clickedRegion);
-
                 JOptionPane.showMessageDialog(panel, info, "Clicked location information", 
                                               JOptionPane.PLAIN_MESSAGE);
             }
-            
-            System.out.println("x: " + x + "y: " + y);
-            System.out.println("x y" + quadX + " " + quadY);
         }
 
         public void mouseReleased(MouseEvent event) {}
