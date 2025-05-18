@@ -10,7 +10,7 @@ public interface QuadtreeInterface{
 	/** 
 	 *  Gets number of points in a certain branch 
 	 */
-	public abstract int countRides(Region currRegion);
+	//public abstract static int countRides(Region currRegion);
 
 	/** 
 	 *  Initializes tree to specified depth
