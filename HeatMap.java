@@ -100,23 +100,21 @@ public class HeatMap extends JFrame {
 
             // Base case: Max depth reached
             if (currDepth >= maxDepth) {
-                int count = quadtree.countRides(region);
-                if (count == 0){
-                    return;
-                }
+                int count = Quadtree.countRides(region);
+                if (count == 0) return;
 
-                double intensity = (double) count / 5000;
+                // Intensity hardcoded due to time limitations
+                double intensity;
+                if (count < 5000) intensity = 0.05;
+                else intensity = (count / 100000.0) - 0.05;
 
+                // Set transparency based on ride concentration
                 int trancy;
-                if (intensity > 1) {
-                    trancy = 255;
-                }
-                else {
-                    trancy = (int) (intensity * 255);
-                }
+                if (intensity > 1) trancy = 255;
+                else trancy = (int) (intensity * 255);
                 regionColors.put(region, new Color(0, 0, 255, trancy));
             }
-            // recursive step
+            // Recursive step: continue searching through regions
             else if (region.isDivided()) {
                 for (Region currRegion : region.subregionList) {
                     colorGridsHelper(currRegion, currDepth + 1);
@@ -128,10 +126,8 @@ public class HeatMap extends JFrame {
             // Base case: desired depth reached
             if (currDepth >= maxDepth) {
                 // Collect max count
-                int count = quadtree.countRides(region);
-                if (count > maxCount) {
-                    maxCount = count;
-                }
+                int count = Quadtree.countRides(region);
+                if (count > maxCount) maxCount = count;
             }
 
             else if (region.isDivided()) {
@@ -185,23 +181,21 @@ public class HeatMap extends JFrame {
             // Convert pixel to quadtree point
             System.out.println(panel.sizeMultiplier);
             int quadX = (int) (x / panel.sizeMultiplier);
-            int quadY = panel.quadtree.TOT_Y  -  (int) (y / panel.sizeMultiplier);
+            int quadY = (int) (y / panel.sizeMultiplier);
             RidePt currPoint = new RidePt(quadX, quadY);
 
-            // If point is inside of quadtree look for its location
+            // If point is inside of quadtree look for its location and return in button
             if (panel.quadtree.getRoot().containsLocation(currPoint)) {
-                // this requires making a function to copy the quadtree
-                // i dont think i can do it
-                System.out.println(panel.quadtree.findRegion(currPoint));
-                panel.quadtree.root = panel.quadtree.findRegion(currPoint);
-                //panel = new MapPanel(quadtree);
-                System.out.println(panel.quadtree.root);
-                panel.sizeMultiplier = 800.0/(panel.quadtree.root.X2 - panel.quadtree.root.X1);
-                panel.colorGrids();
-                panel.repaint();
-                System.out.println("repainted: " + panel.quadtree.root);
-                JOptionPane.showMessageDialog(panel, "test", "Clicked location information", JOptionPane.PLAIN_MESSAGE);
+                Region clickedRegion = panel.quadtree.findRegion(currPoint);
+                RidePt botLeft = new RidePt(clickedRegion.X1, clickedRegion.Y1);
+                RidePt topRight = new RidePt(clickedRegion.X2, clickedRegion.Y2);
+                System.out.println(botLeft);
 
+                String info = "Number of cities in region: " + Quadtree.countRidePoints(clickedRegion);
+                info += "\nTotal origin rides: " + Quadtree.countRides(clickedRegion);
+
+                JOptionPane.showMessageDialog(panel, info, "Clicked location information", 
+                                              JOptionPane.PLAIN_MESSAGE);
             }
             
             System.out.println("x: " + x + "y: " + y);
@@ -216,7 +210,7 @@ public class HeatMap extends JFrame {
 
     public static void main(String[] args) {
         File csv = new File("rides.csv");
-        QuadtreeAdapter test = new QuadtreeAdapter(csv, 4);
-        HeatMap frame = new HeatMap(test.quadtree);
+        QuadtreeAdapter maRides = new QuadtreeAdapter(csv, 4);
+        HeatMap frame = new HeatMap(maRides.quadtree);
     }
 }
