@@ -3,6 +3,9 @@ package DaiToku;
 
 import java.awt.Point;
 
+/**
+ * RidePt stores a single rideshare origin location
+ */
 class RidePt extends Point{
 	private int numRides;
 

@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 
 /**
  * Quadtree made for storing RidePt
+ * Allows for insertion, initialization, and high level manipulation of region class
  */
 public class Quadtree implements QuadtreeInterface{
 	public final int TOT_X;
@@ -151,8 +152,7 @@ public class Quadtree implements QuadtreeInterface{
 		if (currRegion.isDivided()) {
 			for (Region region : currRegion.subregionList) {
 				if (region.containsLocation(point)) {
-					System.out.println(currDepth);
-					// Recursive step: keep searching
+					// Recursive step: keep searching all subregions
 					return findRegionHelper(point, region, currDepth + 1);
 				}
 			}
@@ -179,7 +179,7 @@ public class Quadtree implements QuadtreeInterface{
 	}
 
 	public static void main(String[] args) {
-		Quadtree testQuad = new Quadtree(1000000, 1000000, 3);
+		Quadtree testQuad = new Quadtree(100, 100, 3);
 		testQuad.insert(new RidePt(10,10));
 		testQuad.insert(new RidePt(20,10));
 		testQuad.insert(new RidePt(20,10));
@@ -189,6 +189,6 @@ public class Quadtree implements QuadtreeInterface{
 		System.out.println(testQuad.getRoot());
 		System.out.println(testQuad.findRegion(new RidePt(10,10)));
 		System.out.println(testQuad.findRegion(new RidePt(0,0)));
-
+		System.out.println(countRidePoints(testQuad.root));
 	}
 }

@@ -1,5 +1,9 @@
 package DaiToku;
 
+/**
+ * Quadtree region
+ * Stores child nodes and contains methods to manipulate region
+ */
 class Region{
 	public final int X1;
 	public final int Y1;
