@@ -3,6 +3,7 @@ package DaiToku;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,13 +19,17 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
 /**
  * Single-class HeatMap that builds a quadtree, inserts points,
  * colors each region by ride-count, and supports zoom via clicking.
  */
 public class HeatMap extends JFrame {
 
-    private final MapPanel panel;
+    // changed to not be final
+    private MapPanel panel;
 
     public HeatMap(Quadtree quadtree) {
         panel = new MapPanel(quadtree);
@@ -35,10 +40,11 @@ public class HeatMap extends JFrame {
         setSize(800, 800);
         setLocationRelativeTo(null);
         setVisible(true);
-    }
 
-    public void resetMap() {
-        panel.resetMap();
+        RegionMouseListener listener = new RegionMouseListener();
+        panel.addMouseListener(listener);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
     /**
@@ -50,13 +56,6 @@ public class HeatMap extends JFrame {
         panel.repaint();
     }
 
-    public static void main(String[] args) {
-
-        File csv = new File("rides.csv");
-        QuadtreeAdapter test = new QuadtreeAdapter(csv, 6);
-        HeatMap frame = new HeatMap(test.quadtree);
-    }
-
     /**
      * Inner panel that does all the painting, quadtree logic, and zooming
      */
@@ -64,7 +63,7 @@ public class HeatMap extends JFrame {
         private int maxCount = 1;
         private double sizeMultiplier;
         private final Quadtree quadtree;
-        private final Map<Region, Color> regionColors = new HashMap<>();
+        private Map<Region, Color> regionColors;
         private int maxDepth;
         private int zoom = 1;
         private BufferedImage mapImage;
@@ -84,13 +83,6 @@ public class HeatMap extends JFrame {
             colorGrids();
         }
 
-        /** Clears all points and colors */
-        public void resetMap() {
-            //quadtree.clear(); //clear() not implemented yet
-            //regionColors.clear();
-            repaint();
-        }
-
         /** Insert a point and refresh color mapping */
         public void addRide(RidePt pt) {
             quadtree.insert(pt);
@@ -98,22 +90,21 @@ public class HeatMap extends JFrame {
             repaint();
         }
 
-        public void colorGrids(){
+        public void colorGrids(){ 
+            regionColors = new HashMap<>();
             getMaxCount(quadtree.getRoot(), 0);
             colorGridsHelper(quadtree.getRoot(), 0);
         }
 
         public void colorGridsHelper(Region region, int currDepth) {
-            // base case: thing reached
+
+            // Base case: Max depth reached
             if (currDepth >= maxDepth) {
-                // Add color to the thingamabob
                 int count = quadtree.countRides(region);
                 if (count == 0){
                     return;
                 }
-                // System.out.println("CurrDepth: " + currDepth + " maxcount: " + maxCount);
-                // System.out.println(region);
-                // System.out.println(maxDepth);
+
                 double intensity = (double) count / 5000;
 
                 int trancy;
@@ -126,7 +117,7 @@ public class HeatMap extends JFrame {
                 regionColors.put(region, new Color(0, 0, 255, trancy));
             }
             // recursive step
-            else {
+            else if (region.isDivided()) {
                 for (Region currRegion : region.subregionList) {
                     colorGridsHelper(currRegion, currDepth + 1);
                 }
@@ -134,17 +125,16 @@ public class HeatMap extends JFrame {
         }
 
         public void getMaxCount(Region region, int currDepth) {
-            // base case: desired depth reached
+            // Base case: desired depth reached
             if (currDepth >= maxDepth) {
-                // collect max count
+                // Collect max count
                 int count = quadtree.countRides(region);
                 if (count > maxCount) {
                     maxCount = count;
                 }
             }
 
-            // recurse
-            else {
+            else if (region.isDivided()) {
                 for (Region currRegion : region.subregionList) {
                     getMaxCount(currRegion, currDepth + 1);
                 }
@@ -163,7 +153,6 @@ public class HeatMap extends JFrame {
                 g2.drawImage(mapImage, 0, 0, w, h, null);
             }
 
-
             for (Map.Entry<Region, Color> e : regionColors.entrySet()) {
                 Region r = e.getKey();
                 g2.setColor(e.getValue());
@@ -174,17 +163,60 @@ public class HeatMap extends JFrame {
                 g2.fillRect(x, y, w, h);
             }
 
-            g2.setColor(Color.BLACK);
-            for (Region leaf : regionColors.keySet()) {
-                int x = (int) (leaf.X1 * sizeMultiplier * zoom);
-                int y = (int) (leaf.Y1 * sizeMultiplier * zoom);
-                int w = (int) ((leaf.X2 - leaf.X1) * sizeMultiplier * zoom);
-                int h = (int) ((leaf.Y2 - leaf.Y1) * sizeMultiplier * zoom);
-                g2.drawRect(x, y, w, h);
-            }
+        }
+    }
+
+    /**
+     * An inner class to respond to mouse events.
+     */
+    private class RegionMouseListener implements MouseListener {
+
+        public RegionMouseListener() {
+            System.out.println("DEBUG: Mouselistener activated");
         }
 
+        /**
+         *  Zooms in if mouse clicked
+         */
+        public void mousePressed(MouseEvent event) {
+            int x = event.getX();
+            int y = event.getY();
 
+            // Convert pixel to quadtree point
+            System.out.println(panel.sizeMultiplier);
+            int quadX = (int) (x / panel.sizeMultiplier);
+            int quadY = panel.quadtree.TOT_Y  -  (int) (y / panel.sizeMultiplier);
+            RidePt currPoint = new RidePt(quadX, quadY);
 
+            // If point is inside of quadtree look for its location
+            if (panel.quadtree.getRoot().containsLocation(currPoint)) {
+                // this requires making a function to copy the quadtree
+                // i dont think i can do it
+                System.out.println(panel.quadtree.findRegion(currPoint));
+                panel.quadtree.root = panel.quadtree.findRegion(currPoint);
+                //panel = new MapPanel(quadtree);
+                System.out.println(panel.quadtree.root);
+                panel.sizeMultiplier = 800.0/(panel.quadtree.root.X2 - panel.quadtree.root.X1);
+                panel.colorGrids();
+                panel.repaint();
+                System.out.println("repainted: " + panel.quadtree.root);
+                JOptionPane.showMessageDialog(panel, "test", "Clicked location information", JOptionPane.PLAIN_MESSAGE);
+
+            }
+            
+            System.out.println("x: " + x + "y: " + y);
+            System.out.println("x y" + quadX + " " + quadY);
+        }
+
+        public void mouseReleased(MouseEvent event) {}
+        public void mouseClicked(MouseEvent event) {}
+        public void mouseEntered(MouseEvent event) {}
+        public void mouseExited(MouseEvent event) {}
+    }
+
+    public static void main(String[] args) {
+        File csv = new File("rides.csv");
+        QuadtreeAdapter test = new QuadtreeAdapter(csv, 4);
+        HeatMap frame = new HeatMap(test.quadtree);
     }
 }
