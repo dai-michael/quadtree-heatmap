@@ -7,6 +7,15 @@ import java.io.File;
 import java.util.Scanner;
 import java.io.FileNotFoundException;
 
+/**
+ * Injests CSV of coordinates into the quadtree
+ * Coordinates are converted into six digit integers as
+ * the quadtree only takes integers
+ * Adapter is hardcoded to only accept coordinates in the
+ * Northwestern hemisphere, as that is our area of interest
+ * Stores adapted quadtree
+ * Converts adapted quadtree entries back to coordinates
+ */
 public class QuadtreeAdapter{
 
 	public Quadtree quadtree;
@@ -18,20 +27,8 @@ public class QuadtreeAdapter{
 	private int dimY1;
 	private int dimX2;
 	private int dimY2;
-	private int averageRides;
 
-
-	/**
-	 * Injests CSV of coordinates into the quadtree
-	 * Coordinates are converted into six digit integers as
-	 * the quadtree only takes integers
-	 * Adapter is hardcoded to only accept coordinates in the
-	 * Northwestern hemisphere, as that is our area of interest
-	 * Stores adapted quadtree
-	 * Converts adapted quadtree entries back to coordinates
-	 */
 	public QuadtreeAdapter(File csv, int depth) {
-
 		try{
 			Scanner scanner = new Scanner(csv);
 			// Skip first line
@@ -46,8 +43,6 @@ public class QuadtreeAdapter{
 				maxY = minY;
 			}
 
-			int totRides = 0;
-
 			while (scanner.hasNextLine()) {
 				RidePt currPt = processNextLine(scanner.nextLine());
 				int x = (int) currPt.getX();
@@ -56,9 +51,7 @@ public class QuadtreeAdapter{
 				if (y > maxY) maxY = y;
 				if (x < minX) minX = x;
 				if (y < minY) minY = y;
-				totRides += currPt.numRides();
 			}
-			averageRides = 0;
 
 		}
 		catch(FileNotFoundException e){
@@ -104,7 +97,7 @@ public class QuadtreeAdapter{
 
 	// Convert processed point into one the quadtree can accept
 	public RidePt convertToQuad(RidePt originalPt) {
-		// Flip x horizontally
+		// Flip x coordinates horizontally and y coordinates vertically
 		int newX = (maxX - minX) - (int) (originalPt.getX() - minX);
 		int newY = (maxY - minY) - (int) (originalPt.getY() - minY);
 		return new RidePt(newX, newY, originalPt.numRides());
