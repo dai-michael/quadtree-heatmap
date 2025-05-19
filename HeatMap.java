@@ -190,14 +190,14 @@ public class HeatMap extends JFrame {
 
         String depthStr = JOptionPane.showInputDialog(
             null,
-            "Enter desired resolution of heatmap between 3 to 6. Note: 4 is recommended, inputs outside the range will be set to 4.",
+            "Enter desired resolution of heatmap between 3 to 6 (3 being least precise, 6 being most). Note: 4 is recommended, inputs outside the range will be set to 4.",
             "4"
         );
 
         int depth = 4;  // default
         try {
             depth = Integer.parseInt(depthStr);
-            if (depth < 1 || depth > 6) {
+            if (depth < 3 || depth > 6) {
                 // out of range: reset to default
                 depth = 4;
             }
