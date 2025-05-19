@@ -187,7 +187,26 @@ public class HeatMap extends JFrame {
 
     public static void main(String[] args) {
         File csv = new File("rides.csv");
-        QuadtreeAdapter maRides = new QuadtreeAdapter(csv, 4);
-        HeatMap frame = new HeatMap(maRides.quadtree);
+
+        String depthStr = JOptionPane.showInputDialog(
+            null,
+            "Enter desired resolution of heatmap between 3 to 6. Note: 4 is recommended, inputs outside the range will be set to 4.",
+            "4"
+        );
+
+        int depth = 4;  // default
+        try {
+            depth = Integer.parseInt(depthStr);
+            if (depth < 1 || depth > 6) {
+                // out of range: reset to default
+                depth = 4;
+            }
+        } catch (NumberFormatException e) {
+            // bad format: keep default
+            depth = 4;
+        }
+
+        QuadtreeAdapter maRides = new QuadtreeAdapter(csv, depth);
+        new HeatMap(maRides.quadtree);
     }
 }
