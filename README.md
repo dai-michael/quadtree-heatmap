@@ -6,13 +6,17 @@ We designed a specialized point region quadtree that takes in rideshare data poi
 
 Upon opening the program, users are prompted to set the depth of the heatmap, which determines the size which the heatmap cells render. Users can click on tiles to display more information on the number of rides and cities contained in the tile.
 
-To run the program:
+### To run the program
 
-Compile using the following command
+Create bin directory to store compiled files:
+
+`mkdir bin`
+
+Compile using the following command:
 
 `javac -d bin *.java`
 
-Then run HeatMap.java
+Then run HeatMap.java:
 
 `java -cp bin DaiToku.HeatMap`
 
