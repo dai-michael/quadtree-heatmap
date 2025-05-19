@@ -28,8 +28,6 @@ import java.awt.event.MouseListener;
  * and responds to user clicks with region information.
  */
 public class HeatMap extends JFrame {
-
-    // changed to not be final
     private MapPanel panel;
 
     public HeatMap(Quadtree quadtree) {
@@ -42,6 +40,7 @@ public class HeatMap extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
+        // Create mouse listener
         RegionMouseListener listener = new RegionMouseListener();
         panel.addMouseListener(listener);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -69,7 +68,6 @@ public class HeatMap extends JFrame {
 
         public MapPanel(Quadtree quadtree) {
             this.quadtree = quadtree;
-            // initial color mapping
             this.maxDepth = quadtree.getDefaultDepth();
             sizeMultiplier = 800.0/quadtree.TOT_X;
 
@@ -136,6 +134,7 @@ public class HeatMap extends JFrame {
                 g2.drawImage(mapImage, 0, 0, w, h, null);
             }
 
+            // Create and color boxes using stored colors
             for (Map.Entry<Region, Color> e : regionColors.entrySet()) {
                 Region r = e.getKey();
                 g2.setColor(e.getValue());
@@ -207,6 +206,7 @@ public class HeatMap extends JFrame {
             depth = 4;
         }
 
+        // Convert csv to quadtree using adapter
         QuadtreeAdapter maRides = new QuadtreeAdapter(csv, depth);
         new HeatMap(maRides.quadtree);
     }

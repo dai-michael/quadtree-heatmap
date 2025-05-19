@@ -1,9 +1,10 @@
 package DaiToku;
+
 import java.awt.Point;
 
 public interface QuadtreeInterface{
 	/**
-	 *  Inserts a new cooridnate pair 
+	 *  Inserts a new RidePt
 	 */
 	public abstract void insert(RidePt insertPoint);
 
@@ -18,7 +19,7 @@ public interface QuadtreeInterface{
 	 *  Initializes tree to specified depth
 	 */
 	public abstract void init(Region region, int currDepth);
-	
+
 	/**
 	 *  Gets number of Rides in the quadtree
 	 */

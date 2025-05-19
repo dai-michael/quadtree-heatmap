@@ -14,7 +14,9 @@ import java.io.FileNotFoundException;
  * Adapter is hardcoded to only accept coordinates in the
  * Northwestern hemisphere, as that is our area of interest
  * Stores adapted quadtree
- * Converts adapted quadtree entries back to coordinates
+ * Allows conversion for adapted quadtree entries back to coordinates if 
+ * necessary, although we did not have time to impelment or fully
+ * utilize this feature
  */
 public class QuadtreeAdapter{
 
@@ -47,6 +49,8 @@ public class QuadtreeAdapter{
 				RidePt currPt = processNextLine(scanner.nextLine());
 				int x = (int) currPt.getX();
 				int y = (int) currPt.getY();
+
+				// Set max and min values
 				if (x > maxX) maxX = x;
 				if (y > maxY) maxY = y;
 				if (x < minX) minX = x;
@@ -112,6 +116,8 @@ public class QuadtreeAdapter{
 		File csv = new File("rides.csv");
 		QuadtreeAdapter test = new QuadtreeAdapter(csv, 4);
 		System.out.println(test.quadtree.size());
+		// Compare total X and Total Y to range of coordinates in dataset
+		// to see if we converted successfuly
 		System.out.println(test.quadtree.TOT_X);
 		System.out.println(test.quadtree.TOT_Y);
 	}

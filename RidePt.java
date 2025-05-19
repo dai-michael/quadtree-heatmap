@@ -19,14 +19,17 @@ class RidePt extends Point{
 		this.numRides = numRides;
 	}
 
+	// Add an additional ride at same location
 	public void addRide() {
 		numRides++;
 	}
 
+	// Add multiple rides at same location
 	public void addRides(int rides) {
 		numRides += rides;
 	}
 
+	// Compare if two ridepts have the same location
 	public boolean equals(Point point) {
 		if (this.getX() == point.getX() && this.getY() == point.getY()) {
 			return true;

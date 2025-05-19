@@ -85,50 +85,10 @@ public class Quadtree implements QuadtreeInterface{
 	}
 
 	/**
-	 *  Gets number of Rides in a certain branch 
-	 */
-	public static int countRides(Region currRegion) {
-		// Base case 1: region is empty
-		if (currRegion.isEmpty()) {
-			return 0;
-		}
-		// Base case 2: region contains a Ride
-		if (currRegion.storesRidePt()) {
-			return currRegion.storedRidePt.numRides();
-		}
-		// Recursive step: for every subregion count Rides
-		int numRides = 0;
-		for (Region region : currRegion.subregionList) {
-			numRides += countRides(region);
-		}
-		return numRides;
-	}
-
-	/**
 	 *  Gets number of Rides in the quadtree
 	 */
 	public int size() {
 		return countRides(root);
-	}
-
-	/**
-	 *  Gets number of ridePoints in a certain branch 
-	 */
-	public static int countRidePoints(Region currRegion) {
-		// Base case 1: region is empty
-		if (currRegion.isEmpty()) {
-			return 0;
-		}
-		// Base case 2: region contains a Ride
-		if (currRegion.storesRidePt()) {
-			return 1;
-		}
-		// Recursive step: for every subregion count Rides
-		int numRides = 0;
-		for (Region region : currRegion.subregionList) {
-			numRides += countRidePoints(region);
-		}
-		return numRides;
 	}
 
 	/**
@@ -176,6 +136,46 @@ public class Quadtree implements QuadtreeInterface{
 			init(region.SW, currDepth + 1);
 			init(region.NW, currDepth + 1);
 		}
+	}
+
+	/**
+	 *  Gets number of Rides in a certain branch 
+	 */
+	public static int countRides(Region currRegion) {
+		// Base case 1: region is empty
+		if (currRegion.isEmpty()) {
+			return 0;
+		}
+		// Base case 2: region contains a Ride
+		if (currRegion.storesRidePt()) {
+			return currRegion.storedRidePt.numRides();
+		}
+		// Recursive step: for every subregion count Rides
+		int numRides = 0;
+		for (Region region : currRegion.subregionList) {
+			numRides += countRides(region);
+		}
+		return numRides;
+	}
+
+	/**
+	 *  Gets number of ridePoints in a certain branch 
+	 */
+	public static int countRidePoints(Region currRegion) {
+		// Base case 1: region is empty
+		if (currRegion.isEmpty()) {
+			return 0;
+		}
+		// Base case 2: region contains a Ride
+		if (currRegion.storesRidePt()) {
+			return 1;
+		}
+		// Recursive step: for every subregion count Rides
+		int numRides = 0;
+		for (Region region : currRegion.subregionList) {
+			numRides += countRidePoints(region);
+		}
+		return numRides;
 	}
 
 	public static void main(String[] args) {

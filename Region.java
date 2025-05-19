@@ -2,7 +2,7 @@ package DaiToku;
 
 /**
  * Quadtree region
- * Stores child nodes and contains methods to manipulate region
+ * Stores child regions and contains methods to manipulate region
  */
 class Region{
 	public final int X1;
@@ -39,14 +39,14 @@ class Region{
 	/** 
 	 *  Set cooridnate of RidePt in terminal node
 	 *  Not to be confused with insert in quadtree
+	 * 	Return whether or not ridept was successfuly set
 	 */
-	public void setRidePt(RidePt storedRidePt) {
+	public boolean setRidePt(RidePt storedRidePt) {
 		if (isDivided == false) {
 			this.storedRidePt = storedRidePt;
+			return true;
 		}
-		else {
-			// throw an exception because cant store point
-		}
+		return false;
 	}
 
 	/**
@@ -97,8 +97,8 @@ class Region{
 
 	/** 
 	 * Divide region into four quadrants
-	 *  Returns true if successful division
-	 *  Returns false if region is already partitioned
+	 * Returns true if successful division
+	 * Returns false if region is already partitioned
 	 */
 	public boolean subDivide() {
 		if (!isDivided()) {
@@ -129,7 +129,6 @@ class Region{
 			}
 		}
 
-		// Throw an exception because RidePt out of acceptable area
 		return null;
 	}
 
