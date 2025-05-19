@@ -172,7 +172,8 @@ public class HeatMap extends JFrame {
                 RidePt botLeft = new RidePt(clickedRegion.X1, clickedRegion.Y1);
                 RidePt topRight = new RidePt(clickedRegion.X2, clickedRegion.Y2);
 
-                String info = "Number of cities in region: " + Quadtree.countRidePoints(clickedRegion);
+                String info = "Number of cities in region: " + 
+                Quadtree.countRidePoints(clickedRegion);
                 info += "\nTotal origin rides: " + Quadtree.countRides(clickedRegion);
                 JOptionPane.showMessageDialog(panel, info, "Clicked location information", 
                                               JOptionPane.PLAIN_MESSAGE);
@@ -190,7 +191,7 @@ public class HeatMap extends JFrame {
 
         String depthStr = JOptionPane.showInputDialog(
             null,
-            "Enter desired resolution of heatmap between 3 to 6 (3 being least precise, 6 being most). Note: 4 is recommended, inputs outside the range will be set to 4.",
+            "Enter desired resolution of heatmap between 3 to 6. Note: 4 is recommended, inputs outside the range will be set to 4.",
             "4"
         );
 
