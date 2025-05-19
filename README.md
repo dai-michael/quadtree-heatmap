@@ -1,5 +1,5 @@
 # CSCI 136 Final Project: Massachusetts Rideshare Data Heatmap
-By Hiroshi Tokunaga and Michael Dai
+By Hiroshi Tokunaga and Michael Dai for Professor Katie Keith's CSCI 136 class
 
 # Overview
 We designed a specialized point region quadtree to assist in generating a heatmap representation of Massachusetts rideshare pickup locations. Our program processes data from the following [dataset]([url](https://www.mass.gov/info-details/2023-rideshare-data-report)), which, among other factors, stores the number of rideshare pickups per city. To allow data to be stored in our quadtree, we converted the city name to geographical coordinates. We chose a quadtree for its space-efficient storage of 2d points, especially in large, sparsely populated 2d planes, which characterizes our dataset. Using a quadtree allows for greater savings for future applications, for example, if we decide to input higher-resolution data.
