@@ -2,7 +2,7 @@
 By Hiroshi Tokunaga and Michael Dai
 
 # Overview
-We designed a specialized point region quadtree that takes in rideshare data points from the following [dataset]([url](https://www.mass.gov/info-details/2023-rideshare-data-report)) on 2023 Massachusetts rideshare pickup locations. We chose a quadtree for its space-efficient storage of 2d points, especially in large, sparsely populated 2d planes, which characterizes our dataset. Using a quadtree allows for greater savings for future applications, if we decide to input higher-resolution data.
+We designed a specialized point region quadtree which creates a heatmap representing rideshare pickup locations. Our program processes data from the following [dataset]([url](https://www.mass.gov/info-details/2023-rideshare-data-report)) [dataset]([url](https://www.mass.gov/info-details/2023-rideshare-data-report)) on 2023 Massachusetts rideshare pickup locations. We chose a quadtree for its space-efficient storage of 2d points, especially in large, sparsely populated 2d planes, which characterizes our dataset. Using a quadtree allows for greater savings for future applications, if we decide to input higher-resolution data.
 
 Upon opening the program, users are prompted to set the depth of the heatmap, which determines the size which the heatmap cells render. Users can click on tiles to display more information on the number of rides and cities contained in the tile.
 
