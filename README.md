@@ -1,3 +1,5 @@
 # cs136projectDaiToku
 
-Hello
+explain design here
+
+and limitations
